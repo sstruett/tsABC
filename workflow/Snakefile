@@ -1,0 +1,38 @@
+"""
+tsABC
+
+ABC pipeline to identify and estimate transitions to selfing
+"""
+
+
+import sys
+import shutil
+import itertools
+
+
+configfile: "config/config.yaml"
+
+
+onstart:
+    print("sneak into snake..")
+    print(f"configuration sanity: {check_configuration_file(config)}")
+
+
+onsuccess:
+    shutil.rmtree(".snakemake", ignore_errors=True)
+    print("removed .snakemake/")
+
+
+include: "rules/module00.common.smk"
+include: "rules/module01.abc.simulations.smk"
+include: "rules/module02.abc.model_choice.smk"
+# include: "rules/module03.abc.parameter_estimation.smk"
+
+
+localrules:
+    overall,
+
+
+rule overall:
+    input:
+        target_files,

@@ -1,0 +1,114 @@
+---
+ABC:
+
+  # initial seed to generate the random seed numbers for the simulations
+  seed: 12345  # Do not change this
+  nseed: 1e6  # num of seeds, must be bigger than the number of simulations
+  # the number of rows for the generated seeds, will be used for the independent
+  # loci; for Arabidopsis thaliana, the first five rows would mark the seeds for
+  # the simulation of 5 independent loci mimicking 5 chromosomes.
+  locdim: 20
+  # will consequentially execute this number of simulations. This helps to
+  # reduce computational load to create the dag
+  jobluster_simulations: 250
+
+  # id of the first simulation for this workflow. this is the index that is used
+  # to pick the random seed number 
+  first_simid: 0
+
+  simulations:
+    nsim: 10000  # number of simulations for the ABC
+    nsam: 20  # number of sample haplotypes to simulate
+    nloci: 5  # number of independent loci (mimicking chromosomes)
+    locuslen: 1e5  # length of each locus
+    mutrate: 1e-8  # mutation rate
+    recrate: 1e-8  # recombination rate
+    # duration of initial simulation model ("discrete time WF"); see msprime
+    # documentation
+    dtwf: 1000
+
+  # combinations of summary statistics to be used for the model choice and
+  # parameter estimate
+  sumstats:
+    - SFS/LD
+    - TM_WIN
+    - SFS/LD/TM_WIN
+
+  # specifications how to calculate the summarizing statistics
+  sumstats_specs:
+    # based on this seed, we choose which haplotype we use for calculating the
+    # summarizing statistics, as dtwf-models do only support diploid individuals
+    seed: 39868
+    run_masked: False
+    SFS:
+      polarised: False
+    LD:
+      # number of random SNPs to take into account for the LD calculation
+      npos: 2e2
+      breaks: 
+        - 1
+        - 6105.472
+        - 11379.62
+        - 21209.786
+        - 39531.638
+        - 73680.63
+        - 137328.871
+        - 255958.978
+        - 477066.461
+        - 889175.328
+        - 1657280.126
+        - 3088904.21
+        - 5757221.77
+        - 10730537.517
+        - 20000000
+    TM_WIN:
+      winsize: 1e4  # window size of the sliding non-overlapping window
+      classes: 20  # number of discretized bins
+
+  model:
+    # quatrupels: min, max, numeric type (float, int), distribution type
+    # (uniform, loguniform)
+    priors:
+      - [1e3, 1e5, int, loguniform]  # param 1: pop size
+      - [0.5, 1, float, uniform]  # param 2: present selfing rate
+      - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
+      - [1e2, 5e5, int, uniform]  # param 4: time of transition
+
+  alternative_model:
+    # wether to as for the the alternative model to be simulated
+    do_model_choice: True
+    # initial seed to generate the random seed numbers for the simulations
+    seed: 85426  # Do not change this
+    nsim: 10000  # number of simulations for the alternative model in the ABC
+    # id of the first simulation for this workflow. this is the index that is used
+    # to pick the random seed number 
+    first_simid: 0
+    # will consequentially execute this number of simulations. This helps to
+    # reduce computational load to create the dag
+    jobluster_simulations: 250
+
+    # quatrupels: min, max, numeric type (float, int), distribution type
+    # (uniform, loguniform)
+    priors:
+      - [1e3, 1e5, int, loguniform]  # param 1: present pop size
+      - [0.5, 1, float, uniform]  # param 2: constant selfing rate
+      - [1e3, 1e5, int, loguniform]  # param 3: ancestral pop size
+      - [1e2, 5e5, int, uniform]  # param 4: time of pop size change
+
+  # analysis of performance 
+  performance:
+    nsim: 100  # number of simulations per pseudo-observed data set
+    tolerance_estimates: [500]  # number of accepted simulations
+    tolerance_model_choice: [500]  # number of accepted simulations
+    # probably should not be same as sim seed; do not change this
+    pods_seed: 23456
+    poddim: 500  # max number of pod sets; important for seed generation
+    pods:
+      - [1e4,   1e4,   1e4,   1e4]  # param 1 for each pods, respectively
+      - [0.99,  0.99,  0.99,  0.99]  # param 2 for each pods, respectively
+      - [0.1,   0.1,   0.1,   0.1]  # param 3 for each pods, respectively
+      - [1e4,   4e3,   2e3,   2e5]  # param 4 for each pods, respectively
+    pls: [20]
+    pls_max: 55  # maximal pls to be calculated for transformer
+    # regression used for parameter estimate as defined in the r-abc package
+    regression: ["loclinear"]
