@@ -1,5 +1,8 @@
 # tsABC
 
+## IMPORTANT
+ + Why is there no LD stats in statcomp 0
+
 ## still to implement
  + calculation of masked sumstats
  + model choice (reduce dimensionality)
