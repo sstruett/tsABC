@@ -26,7 +26,7 @@ onsuccess:
 include: "rules/module00.common.smk"
 include: "rules/module01.abc.simulations.smk"
 include: "rules/module02.abc.model_choice.smk"
-# include: "rules/module03.abc.parameter_estimation.smk"
+include: "rules/module03.abc.parameter_estimation.smk"
 
 
 localrules:
