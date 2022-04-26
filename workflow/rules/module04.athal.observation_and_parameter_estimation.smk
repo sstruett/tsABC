@@ -9,7 +9,7 @@ parameter estimation on it.
 
 
 localrules:
-    confirm_athal_params_for_loci_being_same_and_save_params
+    confirm_athal_params_for_loci_being_same_and_save_params,
 
 
 rule create_athal_simulation_randints:
@@ -221,8 +221,7 @@ rule aggregate_athal_observations:
         identifier="results/athal/observed/dataset.map.pickle"
     input:
         observations=expand("results/athal/observed/population_{popid}.unmasked.feather",
-            popid=wildcards_popid(config),
-            )
+            popid=wildcards_popid(config))
     log:
         log1="logs/module04/aggregate_athal_observations.log"
     #conda:
@@ -400,6 +399,7 @@ rule transform_athal_sumstats:
         # give head of both files
         echo "\n\nsumstats' head" >> {log.log1}
         head {output.sumstats} >> {log.log1}
+
         """
 
 

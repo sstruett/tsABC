@@ -10,7 +10,7 @@ import itertools
 
 localrules:
     generate_discretizing_breakpoints_for_sumstats,
-    confirm_params_for_loci_being_same_and_save_params
+    confirm_params_for_loci_being_same_and_save_params,
 
 
 rule create_abc_simulation_randints:

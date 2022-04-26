@@ -38,7 +38,7 @@ rule find_pls:
             {input.sumstats} \
             {params.num_pls_max} \
             {wildcards.statcomposition} \
-            "{params.sumstats_to_use}"
+        "{params.sumstats_to_use}"
 
         """
 
@@ -75,7 +75,7 @@ rule find_pls_masked:
             {input.sumstats} \
             {params.num_pls_max} \
             {wildcards.statcomposition} \
-            "{params.sumstats_to_use}"
+        "{params.sumstats_to_use}"
 
         """
 
@@ -125,6 +125,7 @@ rule transform_sumstats:
         # give head of both files
         echo "\n\nsumstats' head" >> {log.log1}
         head {output.sumstats} >> {log.log1}
+
         """
 
 
