@@ -19,6 +19,8 @@
  + for module 02 change script names to include module number
  + add parameter check for the athaliana priors
  + complete localrules in module04, maybe check also for the other modules
+ + add checking mask files for length
+ + add checking that provided regions for athal are same as length of simulation
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them

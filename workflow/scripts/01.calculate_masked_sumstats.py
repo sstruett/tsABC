@@ -38,12 +38,41 @@ tsl = tsl_haploid
 del tsl_haploid
 
 
+# read and prepare mask files
+mask = np.loadtxt(snakemake.input.mask).astype(int)
+region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
+    "treeseq_1001"
+]["chosen_region"][int(float(snakemake.wildcards.locid))]
+region_mask = mask[(region_start <= mask[:, 0]) & (region_end > mask[:, 1])]
+mask = region_mask - region_start
+del region_mask
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(
+        "proportion of exons to mask in chromosome(1-indexed) "
+        + f"{int(float(snakemake.wildcards.locid)) + 1}: "
+        + f"{(mask[:, 1] - mask[:, 0]).sum()/(region_end-region_start)}",
+        file=logfile,
+    )
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("read and prepared the mask file", file=logfile)
+
+
 # mask for regions provided
+tsl_masked = []
 for treeseq in tsl:
-    print(snakemake.input.mask)
-
-
-    sys.exit("#" * 600 + "must implement the masking")
+    tsl_masked.append(
+        treeseq.delete_intervals(mask, simplify=True, record_provenance=True)
+    )
+tsl = tsl_masked
+del tsl_masked
 
 
 # log
