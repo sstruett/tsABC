@@ -255,6 +255,10 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
     return ts_mutated
 
 
+def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
+    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
+
+
 def simulate_transition_to_selfing(param_dict_list, rng):
     """Simulate transitions to selfing
 
@@ -368,6 +372,10 @@ def simulate_popsize_change_with_constant_selfing(param_dict, rng):
     ts = ts_raw.simplify()
 
     return ts
+
+
+def simulate_transition_to_selfing_and_independent_change_of_pop_size(param_dict_list, rng):
+    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
 
 
 def draw_parameter_from_prior(prior_definition, rng):

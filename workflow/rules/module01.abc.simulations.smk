@@ -10,7 +10,7 @@ import itertools
 
 localrules:
     generate_discretizing_breakpoints_for_sumstats,
-    confirm_params_for_loci_being_same_and_save_params,
+    confirm_params_for_loci_being_same_and_save_params
 
 
 rule create_abc_simulation_randints:
@@ -253,11 +253,7 @@ rule aggregate_sumstats_masked:
     # resources:
     # params:
     run:
-        sys.exit(
-            "#" * 600
-        + "aggregate_sumstats_masked\n"
-            + "here, aggregate parameters and average the sumstates of the loci"
-        )
+        "../scripts/01.aggregate_sumstats.py"
 
 
 rule alternative_model_create_simulation_randints:
@@ -419,12 +415,8 @@ rule alternative_model_aggregate_sumstats_masked:
     threads: 1
     # resources:
     # params:
-    run:
-        sys.exit(
-            "#" * 600
-        + "alternative_model_aggregate_sumstats_masked\n"
-            + "here, aggregate parameters and average the sumstates of the loci"
-        )
+    script:
+        "../scripts/01.aggregate_sumstats.py"
 
 
 rule calculate_podstats:
@@ -476,6 +468,19 @@ rule calculate_podstats_masked:
         sumstat_count="results/abc/pods/podstats_masked/podid_{podid}.names.npy"
     input:
         tsl=rules.simulate_treeseq_pods.output.tsl,
+    log:
+        log1="logs/module01/calculate_podstats/podid_{podid}.log",
+    conda:
+        "config/env.yaml"
+    group:
+        "abc_simulation"
+    threads: 1
+    # resources:
+    params:
+        sumstats=config["ABC"]["sumstats"],
+        seed=int(float(config["ABC"]["sumstats_specs"]["seed"]))
+    script:
+        "../scripts/01.calculate_masked_podstats.py"
 
 
 rule aggregate_podstats_masked:
@@ -496,9 +501,4 @@ rule aggregate_podstats_masked:
     params:
         podid_wc=wildcards_podid(config),
     run:
-        sys.exit(
-            "#" * 600
-        + "aggregate_podstats\n"
-            + "here, aggregate parameters and average the sumstates of the loci"
-        )
-
+        "../scripts/01.aggregate_podstats.py"

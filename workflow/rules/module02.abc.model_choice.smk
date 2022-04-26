@@ -40,7 +40,6 @@ rule find_pls:
             {wildcards.statcomposition} \
             "{params.sumstats_to_use}"
 
-        ls results/abc/transformation/
         """
 
 
@@ -78,7 +77,6 @@ rule find_pls_masked:
             {wildcards.statcomposition} \
             "{params.sumstats_to_use}"
 
-        ls results/abc/sumstats/transformed/
         """
 
 

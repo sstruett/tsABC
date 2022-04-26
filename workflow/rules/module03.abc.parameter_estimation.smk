@@ -10,7 +10,7 @@ rule parameter_estimation:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
     log:
-        log1="logs/module02/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
+        log1="logs/module03/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
         "config/env.yaml"
     params:
@@ -27,7 +27,7 @@ rule parameter_estimation_masked:
         sumstats="results/abc/transformation/statcomp_{statcomposition}.simulations.sumstats.masked.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}.pods.podstats.masked.txt",
     log:
-        log1="logs/module02/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
+        log1="logs/module03/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
         "config/env.yaml"
     params:
@@ -48,7 +48,7 @@ rule aggregate_parameter_estimation:
             statcomposition=wildcards_statcomposition(config),
         ),
     log:
-        log1="logs/module02/aggregate_parameter_estimation/parameter_estimation.log",
+        log1="logs/module03/aggregate_parameter_estimation/parameter_estimation.log",
     run:
         sys.exit("#" * 600 + "inside aggregate_parameter_estimation\n" + "")
 
@@ -64,31 +64,16 @@ rule aggregate_parameter_estimation_masked:
             statcomposition=wildcards_statcomposition(config),
         ),
     log:
-        log1="logs/module02/aggregate_parameter_estimation_masked/parameter_estimation_masked.log",
+        log1="logs/module03/aggregate_parameter_estimation_masked/parameter_estimation_masked.log",
     run:
         sys.exit("#" * 600 + "inside aggregate_parameter_estimation_masked\n" + "")
 
 
 rule plot_pod_sumstats:
     output:
-        pdf"results/abc/pod_param_correlation.pdf"
+        pdf="results/abc/pod_param_correlation.pdf",
     input:
         transformed=expand(
             "results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
-            statcomposition=
-            )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            statcomposition=wildcards_statcomposition(config),
+        ),

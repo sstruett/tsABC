@@ -41,7 +41,6 @@ def target_files(wildcards, verbose=True):
                 "results/abc/simulations/alternative.sumstats.masked.feather"
             )
 
-
     # parameter estimations
     if True:
         target_file_list.append("results/abc/parameter_estimation.RDS")
@@ -50,6 +49,17 @@ def target_files(wildcards, verbose=True):
         if config["ABC"]["sumstats_specs"]["run_masked"]:
             target_file_list.append("results/abc/parameter_estimation_masked.RDS")
 
+    # parameter estimation using simulations for A. thaliana
+    if True:
+        target_file_list.append(
+            "results/athal/summarized_athal_parameter_estimations.csv"
+        )
+
+        # if there is the masking asked for
+        if config["ABC"]["sumstats_specs"]["run_masked"]:
+            target_file_list.append(
+                "results/athal/summarized_athal_parameter_estimations_masked.csv"
+            )
 
     # print the requested files to the standard error stream
     if verbose:
@@ -245,6 +255,32 @@ def wildcards_statcomposition(config):
     ]
 
 
+def wildcards_popid(config):
+    """
+    provide a list/generator of all population ids for the observations to be
+    made from Arabidopsis thaliana. This is a helper function for the
+    aggregation rules; it solely relies on the configuration yaml.
+    """
+    return config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"].keys()
+
+
+def wildcards_masked(config):
+    """
+    provide a list/generator of whether the parameters of the Arabidopsis
+    thaliana observations should be estimated additionally with the masked
+    sumstats; we use the configuration of the abc sumstat_specs
+    """
+    assert (
+        type(config["ABC"]["sumstats_specs"]["run_masked"]) == bool
+    ), "the run_masked in sumstats_specs of the configuration file is not a boolean"
+
+    masked = ["unmasked"]
+    if config["ABC"]["sumstats_specs"]["run_masked"]:
+        masked.append("unmasked")
+
+    return masked
+
+
 def which_transformer(wildcards):
     """
     based on the wildcards of the rule, the correct transformer must be found;
@@ -254,5 +290,18 @@ def which_transformer(wildcards):
         transformer = f"results/abc/transformation/masked_transformer_{wildcards['statcomposition']}/Routput_{wildcards['statcomposition']}"
     else:
         transformer = f"results/abc/transformation/transformer_{wildcards['statcomposition']}/Routput_{wildcards['statcomposition']}"
+
+    return transformer
+
+
+def which_transformer_athal(wildcards):
+    """
+    based on the wildcards of the rule, the correct transformer must be found;
+    this basically means if it is the transformer for the masked file or not
+    """
+    if any(["masked" in wildcard for wildcard in wildcards]):
+        transformer = f"results/athal/transformation/masked_transformer_{wildcards['statcomposition']}/Routput_{wildcards['statcomposition']}"
+    else:
+        transformer = f"results/athal/transformation/transformer_{wildcards['statcomposition']}/Routput_{wildcards['statcomposition']}"
 
     return transformer

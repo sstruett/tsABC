@@ -18,7 +18,7 @@ ABC:
 
   simulations:
     nsim: 10000  # number of simulations for the ABC
-    nsam: 20  # number of sample haplotypes to simulate
+    nsam: 12  # number of sample haplotypes to simulate
     nloci: 5  # number of independent loci (mimicking chromosomes)
     locuslen: 1e5  # length of each locus
     mutrate: 1e-8  # mutation rate
@@ -39,7 +39,8 @@ ABC:
     # based on this seed, we choose which haplotype we use for calculating the
     # summarizing statistics, as dtwf-models do only support diploid individuals
     seed: 39868
-    run_masked: False
+    seed_athal: 55578
+    run_masked: True
     SFS:
       polarised: False
     LD:
@@ -112,3 +113,48 @@ ABC:
     pls_max: 55  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
     regression: ["loclinear"]
+
+  # parameter estimation on Arabidopsis thaliana using the six-parameter model
+  athaliana:
+    # initial seed to generate the random seed numbers for the simulations
+    seed: 91424  # Do not change this
+    nseed: 1e6  # num of seeds, must be bigger than the number of simulations
+    # the number of rows for the generated seeds, will be used for the independent
+    # loci; for Arabidopsis thaliana, the first five rows would mark the seeds for
+    # the simulation of 5 independent loci mimicking 5 chromosomes.
+    locdim: 20
+    # will consequentially execute this number of simulations. This helps to
+    # reduce computational load to create the dag
+    jobluster_simulations: 250
+
+    priors:
+      - [1e3, 1e5, int, loguniform]  # param 1: present pop size
+      - [1e3, 1e5, int, loguniform]  # param 2: ancestral pop size
+      - [1e2, 5e5, int, uniform]  # param 4: time of pop size change
+      - [0.8, 1, float, uniform]  # param 3: present selfing rate
+      - [0, 0.2, float, uniform]  # param 4: ancestral selfing rate
+      - [1e2, 5e5, int, uniform]  # param 5: time of transition
+
+    observations:
+      # maximum number of observations from the population
+      num_observations: 1000
+      treeseq_1001:
+        # path to the full 1001 genomes tree sequence
+        path: "resources/athal/1135_tsinfer_tree_sequence.ts"
+        chrom_multiplier: 1e8  # start of chromosomal position multiplier
+        # The region should be chosen in a way that the mask file indexes the
+        # correct exonic regions
+        position_per_locus:
+          - [18_000_000, 19_000_000]  # start/end for chromosome 1
+          - [18_000_000, 19_000_000]  # start/end for chromosome 2
+          - [18_000_000, 19_000_000]  # start/end for chromosome 3
+          - [18_000_000, 19_000_000]  # start/end for chromosome 4
+          - [18_000_000, 19_000_000]  # start/end for chromosome 5
+        popid:
+          CEU:  # this name will be the population id
+            path: "path/to/CEU.individual.identifier_list_CEU"
+          IBnr:  # this name will be the population id
+            path: "path/to/CEU.individual.identifier_list_IBnr"
+          Relicts:  # this name will be the population id
+            path: "path/to/CEU.individual.identifier_list_Relicts"
+
