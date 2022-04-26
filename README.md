@@ -21,6 +21,7 @@
  + complete localrules in module04, maybe check also for the other modules
  + add checking mask files for length
  + add checking that provided regions for athal are same as length of simulation
+ + make plotting in target_files() function become true
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them

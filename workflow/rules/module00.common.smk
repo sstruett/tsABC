@@ -40,6 +40,7 @@ def target_files(wildcards, verbose=True):
             target_file_list.append(
                 "results/abc/simulations/alternative.sumstats.masked.feather"
             )
+            target_file_list.append("results/abc/model_choice_masked.RDS")
 
     # parameter estimations
     if True:
@@ -61,8 +62,22 @@ def target_files(wildcards, verbose=True):
                 "results/athal/summarized_athal_parameter_estimations_masked.csv"
             )
 
+    # plotting
+    if False:
+        target_file_list.extend(
+            [
+                "results/plots/abc/pod_param_correlation.pdf",
+                "results/plots/abc/pod_param_correlation.masked.pdf",
+                "results/plots/athal/pod_param_correlation.pdf",
+                "results/plots/athal/pod_param_correlation.masked.pdf",
+                "results/plots/athal/observations.stats.pdf",
+                "results/plots/athal/observations.stats.masked.pdf",
+            ]
+        )
+
     # print the requested files to the standard error stream
     if verbose:
+        target_file_list.sort(key=str.lower)
         print("\n" + "_" * 80, file=sys.stderr)
         for file_index, target_file in enumerate(target_file_list, start=1):
             print(f"  {file_index}.) {target_file}", file=sys.stderr)
@@ -163,12 +178,10 @@ def check_configuration_file(config):
         type(config["ABC"]["alternative_model"]["do_model_choice"]) == bool
     ), 'wrong type in config file config["ABC"]["sumstats_specs"]["run_masked"] must be boolean'
 
-
     # check if estimate Arabidopsis thaliana with its own simulations
     assert (
         type(config["ABC"]["athaliana"]["do_thaliana"]) == bool
     ), 'wrong type in config file config["ABC"]["athaliana"]["do_thaliana"] must be boolean'
-
 
     return True
 

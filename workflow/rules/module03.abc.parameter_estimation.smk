@@ -5,7 +5,7 @@ Here, we estimate the parameters for the performance analysis
 
 rule parameter_estimation:
     output:
-        estims="results/abc/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.RDS",
+        estims="results/abc/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...RDS",
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
@@ -22,10 +22,10 @@ rule parameter_estimation:
 
 rule parameter_estimation_masked:
     output:
-        estims="results/abc/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.RDS",
+        estims="results/abc/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...masked.RDS",
     input:
-        sumstats="results/abc/transformation/statcomp_{statcomposition}.simulations.sumstats.masked.txt",
-        podstats="results/abc/transformation/statcomp_{statcomposition}.pods.podstats.masked.txt",
+        sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
+        podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.masked.txt",
     log:
         log1="logs/module03/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:

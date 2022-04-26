@@ -130,7 +130,7 @@ rule transform_sumstats:
 
 rule model_choice:
     output:
-        bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.RDS",
+        bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...RDS",
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.txt",
@@ -148,11 +148,11 @@ rule model_choice:
 
 rule model_choice_masked:
     output:
-        bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.RDS",
+        bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...masked.RDS",
     input:
-        sumstats="results/abc/transformation/statcomp_{statcomposition}.simulations.sumstats.masked.txt",
-        alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}.simulations.alternative.sumstats.masked.txt",
-        podstats="results/abc/transformation/statcomp_{statcomposition}.pods.podstats.masked.txt",
+        sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
+        alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.masked.txt",
+        podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.masked.txt",
     log:
         log1="logs/module02/model_choice_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
