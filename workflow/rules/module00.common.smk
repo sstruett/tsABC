@@ -50,7 +50,7 @@ def target_files(wildcards, verbose=True):
             target_file_list.append("results/abc/parameter_estimation_masked.RDS")
 
     # parameter estimation using simulations for A. thaliana
-    if True:
+    if config["ABC"]["athaliana"]["do_thaliana"]:
         target_file_list.append(
             "results/athal/summarized_athal_parameter_estimations.csv"
         )
@@ -162,6 +162,13 @@ def check_configuration_file(config):
     assert (
         type(config["ABC"]["alternative_model"]["do_model_choice"]) == bool
     ), 'wrong type in config file config["ABC"]["sumstats_specs"]["run_masked"] must be boolean'
+
+
+    # check if estimate Arabidopsis thaliana with its own simulations
+    assert (
+        type(config["ABC"]["athaliana"]["do_thaliana"]) == bool
+    ), 'wrong type in config file config["ABC"]["athaliana"]["do_thaliana"] must be boolean'
+
 
     return True
 

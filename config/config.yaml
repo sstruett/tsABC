@@ -116,6 +116,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
+    do_thaliana: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations
