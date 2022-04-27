@@ -412,6 +412,8 @@ rule alternative_model_aggregate_sumstats_masked:
         ),
     log:
         log1="logs/module01/alternative_model_aggregate_sumstats_masked.log",
+    conda:
+        "config/env.yaml"
     threads: 1
     # resources:
     # params:
