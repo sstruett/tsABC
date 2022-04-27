@@ -6,3 +6,4 @@ logs/
 .snakemake/
 workflow/scripts/__pycache__/
 resources/
+rdev.RData
