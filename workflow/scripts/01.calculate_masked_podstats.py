@@ -39,12 +39,44 @@ tsl = tsl_haploid
 del tsl_haploid
 
 
+# read and prepare mask files
+mask = np.loadtxt(snakemake.input.mask).astype(int)
+region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
+    "treeseq_1001"
+]["chosen_region"][int(float(snakemake.wildcards.locid))]
+region_mask = mask[(region_start <= mask[:, 0]) & (region_end > mask[:, 1])]
+mask = region_mask - region_start
+del region_mask
+
+# filter mask for disjoint intervals
+mask = pyfuncs.filter_mask_for_disjoint_intervals(mask, log=snakemake.log.log1)
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(
+        "proportion of exons to mask in chromosome(1-indexed) "
+        + f"{int(float(snakemake.wildcards.locid)) + 1}: "
+        + f"{(mask[:, 1] - mask[:, 0]).sum()/(region_end-region_start)}",
+        file=logfile,
+    )
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("read and prepared the mask file", file=logfile)
+
+
 # mask for regions provided
+tsl_masked = []
 for treeseq in tsl:
-    print(snakemake.input.mask)
-
-
-    sys.exit("#" * 600 + "must implement the masking")
+    tsl_masked.append(
+        treeseq.delete_intervals(mask, simplify=True, record_provenance=True)
+    )
+tsl = tsl_masked
+del tsl_masked
 
 
 # log
@@ -131,7 +163,7 @@ if "SFS" in listed_sumstats:
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
 
     dataframe_sumstats_sfs = np.concatenate(dataframe_sumstats_sfs, axis=0).reshape(
-    (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
+        (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
     )
 else:
     dataframe_sumstats_sfs = np.empty(shape=0)
@@ -161,7 +193,7 @@ if "LD" in listed_sumstats:
     dataframe_sumstats_ld = dataframe_sumstats_ld.mean(axis=1)
 
     dataframe_sumstats_ld = np.concatenate(dataframe_sumstats_ld, axis=0).reshape(
-    (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
+        (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
     )
 else:
     dataframe_sumstats_ld = np.empty(shape=0)
@@ -189,9 +221,9 @@ if "TM_WIN" in listed_sumstats:
 
     # get average of tm_win over the different loci
     dataframe_sumstats_tm_win = dataframe_sumstats_tm_win.mean(axis=1)
-    dataframe_sumstats_tm_win = np.concatenate(dataframe_sumstats_tm_win, axis=0).reshape(
-    (len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0])
-    )
+    dataframe_sumstats_tm_win = np.concatenate(
+        dataframe_sumstats_tm_win, axis=0
+    ).reshape((len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0]))
 else:
     dataframe_sumstats_tm_win = np.empty(shape=0)
 

@@ -47,6 +47,9 @@ region_mask = mask[(region_start <= mask[:, 0]) & (region_end > mask[:, 1])]
 mask = region_mask - region_start
 del region_mask
 
+# filter mask for disjoint intervals
+mask = pyfuncs.filter_mask_for_disjoint_intervals(mask, log=snakemake.log.log1)
+
 
 # log
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:

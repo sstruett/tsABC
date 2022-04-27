@@ -132,7 +132,7 @@ def simulate_treesequence_under_model(params, rule_parameters, rng, log):
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated ancestry", file=logfile)
 
-    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
     ts_mutated = msprime.sim_mutations(
         ts,
         rate=rule_parameters["mutrate"],
@@ -202,7 +202,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
     param_dict["recombination_rate_effective"] = rescale_recombination_rate_by_selfing(
         recombination_rate=rule_parameters["recrate"], selfing_rate=params[1]
     )
-    param_dict["msprime_model"]= msprime_model
+    param_dict["msprime_model"] = msprime_model
 
     # log
     with open(log, "a", encoding="utf-8") as logfile:
@@ -235,7 +235,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated ancestry", file=logfile)
 
-    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
     ts_mutated = msprime.sim_mutations(
         ts,
         rate=rule_parameters["mutrate"],
@@ -256,7 +256,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
 
 
 def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
-    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
+    sys.exit("#" * 600 + " inside simulate_treesequence_under_six_parameter_model")
 
 
 def simulate_transition_to_selfing(param_dict_list, rng):
@@ -276,7 +276,7 @@ def simulate_transition_to_selfing(param_dict_list, rng):
         A single tree sequence
     """
     # ssimulate phase zero - selfing
-    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
     ts_phase_zero = msprime.sim_ancestry(
         samples=param_dict_list[0]["samples"],
         demography=param_dict_list[0]["demography"],
@@ -300,7 +300,7 @@ def simulate_transition_to_selfing(param_dict_list, rng):
     )
 
     # simulate phase one - outcrossing
-    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
     ts_phase_one = msprime.sim_ancestry(
         demography=param_dict_list[1]["demography"],
         discrete_genome=True,
@@ -345,7 +345,7 @@ def simulate_popsize_change_with_constant_selfing(param_dict, rng):
         A single tree sequence
     """
     # ssimulate phase zero - selfing
-    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
     ts_raw = msprime.sim_ancestry(
         samples=param_dict["samples"],
         demography=param_dict["demography"],
@@ -374,8 +374,10 @@ def simulate_popsize_change_with_constant_selfing(param_dict, rng):
     return ts
 
 
-def simulate_transition_to_selfing_and_independent_change_of_pop_size(param_dict_list, rng):
-    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
+def simulate_transition_to_selfing_and_independent_change_of_pop_size(
+    param_dict_list, rng
+):
+    sys.exit("#" * 600 + " inside simulate_treesequence_under_six_parameter_model")
 
 
 def draw_parameter_from_prior(prior_definition, rng):
@@ -720,3 +722,86 @@ def transition_probability_matrix(sequence, nstates, logtransform=False):
                 row[:] = [element_row / sum_row for element_row in row]
 
     return np.matrix(transition_matrix)
+
+
+def filter_mask_for_disjoint_intervals(mask, log=False):
+    """Filter mask for disjoint intervals
+
+    tskit.delete_intervals() functions can take a mask argument. This function
+    will provide a mask np.array(N, 2) that fits the requirements of the tskit
+    function, i. e. all disjoint intervals
+
+    Args:
+        mask: np.array(N, 2), with N being the number of intervals
+        log: path to log file or False
+
+    Returns:
+        np.array(N, 2)
+    """
+    # check for direction of interval, must be ascending
+    for interval_id, (start, end) in enumerate(mask):
+        if start > end:
+            mask[interval_id] = np.array([end, start])
+
+            # log
+            if log:
+                with open(log, "a", encoding="utf-8") as logfile:
+                    print(datetime.datetime.now(), end="\t", file=logfile)
+                    print(
+                        f"changed interval direction for id (0-based): {interval_id}",
+                        file=logfile,
+                    )
+
+    # check for disjointness
+    overlapping_intervals = []
+    for interval_id, (prev_end, start) in enumerate(zip(mask[:, 1], mask[1:, 0])):
+        if prev_end > start:
+            overlapping_intervals.append(interval_id)
+
+    # fuse the overlapping intervals and repeat the loop
+    counter = 0
+    while len(overlapping_intervals):
+        counter += 1
+        if counter > 1e7:
+            sys.exit(
+                "#" * 600
+                + " inside filter_mask_for_disjoint_intervals()\n"
+                + "you passed the while-loop more than 1e7-times. Thus, I killed it.\n"
+                + "In case you know that everything is correct, come here and change the \n"
+                + "value to a higher threshold."
+            )
+
+        for overlapping_id in overlapping_intervals:
+            mask[overlapping_id] = np.array(
+                [mask[overlapping_id, 0], mask[overlapping_id + 1, 1]]
+            )
+            mask = np.delete(mask, overlapping_id + 1, axis=0)
+
+            # re-index the overlapping id
+            overlapping_intervals = [this_id - 1 for this_id in overlapping_intervals]
+
+            # log
+            if log:
+                with open(log, "a", encoding="utf-8") as logfile:
+                    print(datetime.datetime.now(), end="\t", file=logfile)
+                    print(
+                        f"fused intervals (0-based): {interval_id, interval_id+1}",
+                        file=logfile,
+                    )
+
+        # create new list of intervals
+        overlapping_intervals = []
+        for interval_id, (prev_end, start) in enumerate(zip(mask[:, 1], mask[1:, 0])):
+            if prev_end > start:
+                overlapping_intervals.append(interval_id)
+
+    # log
+    if log:
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                "corrected the mask, filtered for disjoint intervals",
+                file=logfile,
+            )
+
+    return mask
