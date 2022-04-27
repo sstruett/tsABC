@@ -25,7 +25,7 @@ for npy in snakemake.input.npys:
     read_data_list[np.where(simid == np.array(snakemake.params.simid_wc))[0][0]][
         locid
     ] = np.load(npy)
-read_data = np.array(read_data_list)
+read_data = np.array(read_data_list, dtype=float)
 
 
 # take mean value over the independent loci
