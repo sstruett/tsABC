@@ -10,19 +10,19 @@ ABC:
   locdim: 20
   # will consequentially execute this number of simulations. This helps to
   # reduce computational load to create the dag
-  jobluster_simulations: 250
+  jobluster_simulations: 100
 
   # id of the first simulation for this workflow. this is the index that is used
   # to pick the random seed number 
   first_simid: 0
 
   simulations:
-    nsim: 10000  # number of simulations for the ABC
+    nsim: 5000  # number of simulations for the ABC
     nsam: 12  # number of sample haplotypes to simulate
     nloci: 5  # number of independent loci (mimicking chromosomes)
-    locuslen: 1e5  # length of each locus
-    mutrate: 1e-8  # mutation rate
-    recrate: 1e-8  # recombination rate
+    locuslen: 1e6  # length of each locus
+    mutrate: 6.95e-9  # mutation rate
+    recrate: 3.6e-8  # recombination rate
     # duration of initial simulation model ("discrete time WF"); see msprime
     # documentation
     dtwf: 1000
@@ -70,10 +70,10 @@ ABC:
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e3, 1e5, int, loguniform]  # param 1: pop size
-      - [0.5, 1, float, uniform]  # param 2: present selfing rate
+      - [1e4, 5e5, int, loguniform]  # param 1: pop size
+      - [0.95, 1, float, uniform]  # param 2: present selfing rate
       - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
-      - [1e2, 5e5, int, uniform]  # param 4: time of transition
+      - [1e4, 1e6, int, uniform]  # param 4: time of transition
 
   alternative_model:
     # wether to as for the the alternative model to be simulated
@@ -86,15 +86,15 @@ ABC:
     first_simid: 0
     # will consequentially execute this number of simulations. This helps to
     # reduce computational load to create the dag
-    jobluster_simulations: 250
+    jobluster_simulations: 100
 
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e3, 1e5, int, loguniform]  # param 1: present pop size
-      - [0.5, 1, float, uniform]  # param 2: constant selfing rate
-      - [1e3, 1e5, int, loguniform]  # param 3: ancestral pop size
-      - [1e2, 5e5, int, uniform]  # param 4: time of pop size change
+      - [1e4, 5e5, int, loguniform]  # param 1: present pop size
+      - [0.95, 1, float, uniform]  # param 2: constant selfing rate
+      - [1e4, 5e5, int, loguniform]  # param 3: ancestral pop size
+      - [1e4, 1e6, int, uniform]  # param 4: time of pop size change
 
   # analysis of performance 
   performance:
@@ -105,10 +105,10 @@ ABC:
     pods_seed: 23456
     poddim: 500  # max number of pod sets; important for seed generation
     pods:
-      - [1e4,   1e4,   1e4,   1e4,  1e4]  # param 1 for each pods, respectively
+      - [4e4,   4e4,   4e4,   4e4,  4e4]  # param 1 for each pods, respectively
       - [0.99,  0.99,  0.99,  0.99, 0.99]  # param 2 for each pods, respectively
       - [0.1,   0.1,   0.1,   0.1,  0.1]  # param 3 for each pods, respectively
-      - [1e4,   4e3,   2e3,   2e5,  1e5]  # param 4 for each pods, respectively
+      - [2e5,   2e4,   4e4,   1e5,  5e5]  # param 4 for each pods, respectively
     pls: [20]
     pls_max: 55  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
@@ -146,11 +146,11 @@ ABC:
         # The region should be chosen in a way that the mask file indexes the
         # correct exonic regions
         chosen_region:
-          - [18_000_000, 18_100_000]  # start/end for chromosome 1
-          - [18_000_000, 18_100_000]  # start/end for chromosome 2
-          - [18_000_000, 18_100_000]  # start/end for chromosome 3
-          - [18_000_000, 18_100_000]  # start/end for chromosome 4
-          - [18_000_000, 18_100_000]  # start/end for chromosome 5
+          - [18_000_000, 19_000_000]  # start/end for chromosome 1
+          - [18_000_000, 19_000_000]  # start/end for chromosome 2
+          - [18_000_000, 19_000_000]  # start/end for chromosome 3
+          - [18_000_000, 19_000_000]  # start/end for chromosome 4
+          - [18_000_000, 19_000_000]  # start/end for chromosome 5
         popid:
           CEU:  # this name will be the population id
             path: "path/to/CEU.individual.identifier_list_CEU"

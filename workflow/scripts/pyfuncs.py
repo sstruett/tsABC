@@ -795,12 +795,30 @@ def filter_mask_for_disjoint_intervals(mask, log=False):
             if prev_end > start:
                 overlapping_intervals.append(interval_id)
 
+
+    # remove all intervals with zero length
+    counter = 0
+    while any(mask[:,0] == mask[:,1]):
+        counter += 1
+        if counter > 1e7:
+            sys.exit(
+                "#" * 600
+                + " inside filter_mask_for_disjoint_intervals()\n"
+                + "you passed the while-loop more than 1e7-times. Thus, I killed it.\n"
+                + "In case you know that everything is correct, come here and change the \n"
+                + "value to a higher threshold."
+            )
+
+        for maskid in  np.where(mask[:,0] >= mask[:,1])[0]:
+            mask = np.delete(mask, maskid, axis=0)
+
+
     # log
     if log:
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print(
-                "corrected the mask, filtered for disjoint intervals",
+                "corrected the mask, zero-length intervals, filtered for disjoint intervals",
                 file=logfile,
             )
 

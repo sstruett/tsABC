@@ -7,8 +7,6 @@
  + Why is there no LD stats in statcomp 0, maybe use more SNPs to calculate all classes, but make sure that NaN is not a problem
 
 ## still to implement
- + model choice
- + model choice for masked sumstats (should work using the same script)
  + parameter estimate
  + parameter estimate for masked sumstats (should work using the same script)
  + rewrite the transformation part to use a single rule for the transformation
@@ -21,6 +19,7 @@
  + add checking mask files for length of locus
  + add checking that provided regions for athal are same as length of simulation
  + make plotting in target_files() function become true
+ + summarize the model choice with the classification; produce a table also: pods(rows) --> percentage of each support class
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
