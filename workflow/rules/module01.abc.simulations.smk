@@ -470,8 +470,11 @@ rule calculate_podstats_masked:
         sumstat_count="results/abc/pods/podstats_masked/podid_{podid}.names.npy"
     input:
         tsl=rules.simulate_treeseq_pods.output.tsl,
+        breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
+        mask=expand("resources/mask/locus_{locid}.txt",
+            locid=wildcards_locid(config)),  # mask file
     log:
-        log1="logs/module01/calculate_podstats/podid_{podid}.log",
+        log1="logs/module01/calculate_podstats_masked/podid_{podid}.log",
     conda:
         "config/env.yaml"
     group:

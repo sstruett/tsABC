@@ -8,6 +8,7 @@ import datetime
 import warnings
 import itertools
 import pickle
+import re
 import math
 import numpy as np
 import tskit
@@ -40,27 +41,34 @@ del tsl_haploid
 
 
 # read and prepare mask files
-mask = np.loadtxt(snakemake.input.mask).astype(int)
-region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
-    "treeseq_1001"
-]["chosen_region"][int(float(snakemake.wildcards.locid))]
-region_mask = mask[(region_start <= mask[:, 0]) & (region_end > mask[:, 1])]
-mask = region_mask - region_start
-del region_mask
+mask = []
+for mask_file in snakemake.input.mask:
+    # the id of the chromosome from input file
+    split = re.split(r"_|\.|\/", mask_file)
+    chromid = int(split[np.where(np.array(split) == "locus")[0].max() + 1])
 
-# filter mask for disjoint intervals
-mask = pyfuncs.filter_mask_for_disjoint_intervals(mask, log=snakemake.log.log1)
+    # load mask file
+    this_mask = np.loadtxt(mask_file).astype(int)
+    region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
+        "treeseq_1001"
+    ]["chosen_region"][chromid]
+    region_mask = this_mask[
+        (region_start <= this_mask[:, 0]) & (region_end > this_mask[:, 1])
+    ]
+    this_mask = region_mask - region_start
+
+    # filter mask for disjoint intervals
+    this_mask = pyfuncs.filter_mask_for_disjoint_intervals(
+        this_mask, log=snakemake.log.log1
+    )
+    mask.append(this_mask)
+    del region_mask, this_mask
 
 
 # log
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
-    print(
-        "proportion of exons to mask in chromosome(1-indexed) "
-        + f"{int(float(snakemake.wildcards.locid)) + 1}: "
-        + f"{(mask[:, 1] - mask[:, 0]).sum()/(region_end-region_start)}",
-        file=logfile,
-    )
+    print("loaded all masks for pods", file=logfile)
 
 
 # log
@@ -69,12 +77,13 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print("read and prepared the mask file", file=logfile)
 
 
-# mask for regions provided
-tsl_masked = []
-for treeseq in tsl:
-    tsl_masked.append(
-        treeseq.delete_intervals(mask, simplify=True, record_provenance=True)
+tsl_masked = np.empty(tsl.shape, dtype=tskit.TreeSequence)
+for treeid, treeseq in np.ndenumerate(tsl):
+    chromid = treeid[1]
+    tsl_masked[treeid] = treeseq.delete_intervals(
+        mask[chromid], simplify=True, record_provenance=True
     )
+del tsl
 tsl = tsl_masked
 del tsl_masked
 

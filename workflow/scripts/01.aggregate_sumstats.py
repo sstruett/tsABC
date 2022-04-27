@@ -18,7 +18,7 @@ nsimid = len(snakemake.params.simid_wc)
 
 # create data list to read and store by locus
 read_data_list = [[[] for _ in range(nloci)] for _ in range(nsimid)]
-for npy in snakemake.input.npys:
+for npyid, npy in enumerate(snakemake.input.npys):
     split = re.split(r"_|\.|\/", npy)
     simid = int(split[np.where(np.array(split) == "sim")[0].max() + 1])
     locid = int(split[np.where(np.array(split) == "locus")[0].max() + 1])
