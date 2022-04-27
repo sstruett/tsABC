@@ -48,7 +48,7 @@ rule find_pls_masked:
         transformer="results/abc/transformation/masked_transformer_{statcomposition}/Routput_{statcomposition}",
         rmse_plot="results/abc/transformation/masked_transformer_{statcomposition}/RMSE_{statcomposition}.pdf",
     input:
-        sumstats=rules.aggregate_sumstats_masked.output.masked,
+        sumstats=rules.aggregate_sumstats_masked.output.sumstats,
         script="workflow/scripts/find_pls_by_wanted_sumstats.R",
     log:
         log1="logs/module02/find_pls/transformed_{statcomposition}.log",
@@ -132,6 +132,7 @@ rule transform_sumstats:
 rule model_choice:
     output:
         bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...RDS",
+        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.pdf"
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.txt",
@@ -150,6 +151,7 @@ rule model_choice:
 rule model_choice_masked:
     output:
         bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...masked.RDS",
+        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.pdf"
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.masked.txt",

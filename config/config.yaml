@@ -105,10 +105,10 @@ ABC:
     pods_seed: 23456
     poddim: 500  # max number of pod sets; important for seed generation
     pods:
-      - [1e4,   1e4,   1e4,   1e4]  # param 1 for each pods, respectively
-      - [0.99,  0.99,  0.99,  0.99]  # param 2 for each pods, respectively
-      - [0.1,   0.1,   0.1,   0.1]  # param 3 for each pods, respectively
-      - [1e4,   4e3,   2e3,   2e5]  # param 4 for each pods, respectively
+      - [1e4,   1e4,   1e4,   1e4,  1e4]  # param 1 for each pods, respectively
+      - [0.99,  0.99,  0.99,  0.99, 0.99]  # param 2 for each pods, respectively
+      - [0.1,   0.1,   0.1,   0.1,  0.1]  # param 3 for each pods, respectively
+      - [1e4,   4e3,   2e3,   2e5,  1e5]  # param 4 for each pods, respectively
     pls: [20]
     pls_max: 55  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
@@ -116,7 +116,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: True
+    do_thaliana: False
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations

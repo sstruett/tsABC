@@ -231,9 +231,9 @@ rule aggregate_sumstats:
 
 rule aggregate_sumstats_masked:
     output:
-        masked="results/abc/simulations/sumstats.masked.feather"
+        sumstats="results/abc/simulations/sumstats.masked.feather"
     input:
-        npys_masked=expand(
+        npys=expand(
             "results/abc/simulations/sumstats_masked/sim_{simid}.locus_{locid}.npy",
             simid=wildcards_simid(config),
             locid=wildcards_locid(config),
@@ -251,8 +251,10 @@ rule aggregate_sumstats_masked:
         log1="logs/module01/aggregate_sumstats_masked.log",
     threads: 1
     # resources:
-    # params:
-    run:
+    params:
+        simid_wc = wildcards_simid(config),
+        locid_wc = wildcards_locid(config)
+    script:
         "../scripts/01.aggregate_sumstats.py"
 
 
@@ -394,9 +396,9 @@ rule alternative_model_aggregate_sumstats:
 
 rule alternative_model_aggregate_sumstats_masked:
     output:
-        masked="results/abc/simulations/alternative.sumstats.masked.feather"
+        sumstats="results/abc/simulations/alternative.sumstats.masked.feather"
     input:
-        npys_masked=expand(
+        npys=expand(
             rules.alternative_model_calculate_masked_sumstats.output.npy,
             simid=wildcards_simid(config, alternative_model=True),
             locid=wildcards_locid(config),
@@ -416,7 +418,9 @@ rule alternative_model_aggregate_sumstats_masked:
         "config/env.yaml"
     threads: 1
     # resources:
-    # params:
+    params:
+        simid_wc = wildcards_simid(config, alternative_model=True),
+        locid_wc = wildcards_locid(config)
     script:
         "../scripts/01.aggregate_sumstats.py"
 
@@ -492,7 +496,7 @@ rule aggregate_podstats_masked:
     output:
         sumstats="results/abc/pods/podstats.masked.feather",
     input:
-        sumstats=expand(rules.calculate_podstats_masked.output.npy,
+        npys=expand(rules.calculate_podstats_masked.output.npy,
             podid=wildcards_podid(config)),
         sumstat_names=expand(
             rules.calculate_podstats_masked.output.sumstat_count,
@@ -505,5 +509,5 @@ rule aggregate_podstats_masked:
     # resources:
     params:
         podid_wc=wildcards_podid(config),
-    run:
+    script:
         "../scripts/01.aggregate_podstats.py"

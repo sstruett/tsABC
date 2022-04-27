@@ -241,7 +241,7 @@ def wildcards_podid(config):
     function for the aggregation rules; it solely relies on the configuration
     yaml.
     """
-    return range(len(config["ABC"]["performance"]["pods"]))
+    return range(len(config["ABC"]["performance"]["pods"][0]))
 
 
 def wildcards_plsid(config):
