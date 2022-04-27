@@ -2,12 +2,12 @@ library(abc)
 library(tidyr)
 library(pbapply)
 
-save.image(file = "rdev.RData")
-stop("saved rdev.RData")
-setwd(
-  "/Users/struett/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
-)
-load("rdev.RData")
+# save.image(file = "rdev.RData")
+# stop("saved rdev.RData")
+# setwd(
+#   "/Users/struett/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
+# )
+# load("rdev.RData")
 
 # perform a model choice between two proposed models
 
@@ -23,12 +23,23 @@ podstats <- read.csv(snakemake@input$podstats, sep = "\t")
 podparam <- podstats[, grep("param", colnames(podstats))]
 podstats <-
   podstats[, grep("LinearCombination", colnames(podstats))]
-podindex <- interaction(podparam, sep = "_")
 
 
 # make podindex being same as in config file
-podconfig <- matrix(data=as.numeric(snakemake@config$ABC$performance$pods), nrow = 4)
-podconfig
+podconfig <-
+  matrix(
+    data = as.numeric(snakemake@config$ABC$performance$pods),
+    ncol = ncol(podparam)
+  )
+podindex <- apply(podparam, 1, function(x) {
+  this_podindex <- numeric()
+  for (i in 1:nrow(podconfig)) {
+    if (all(podconfig[i, ] == x)) {
+      this_podindex <- c(this_podindex, i)
+    }
+  }
+  return(this_podindex)
+})
 
 # read paremeter for inference
 ntolerated <- as.numeric(snakemake@wildcards$tolid)
@@ -47,7 +58,7 @@ sumstats_model_choice <-
                                                                              1, sep = "_"))]
 podstats <-
   podstats[, which(colnames(podstats) %in% paste("LinearCombination", 1:npls - 1, sep = "_"))]
-                                                                        
+
 
 model_choice_result <- pbapply(podstats, 1, function(x) {
   a <- postpr(
@@ -58,23 +69,28 @@ model_choice_result <- pbapply(podstats, 1, function(x) {
     method = "mnlogistic",
     corr = TRUE   # corr seems not to work
   )
-  return(summary(a, rejection=T, print=F))
+  return(summary(a, rejection = T, print = F))
 })
 
 bayes_rejection <- numeric(length = length(model_choice_result))
 bayes_mnlogistic <- numeric(length = length(model_choice_result))
 for (i in 1:length(model_choice_result)) {
   res <- model_choice_result[[i]]
-  bayes_rejection[i] <- model_choice_result[[i]]$rejection$BayesF["transition", "constant_selfing"]
-  bayes_mnlogistic[i] <- model_choice_result[[i]]$mnlogistic$BayesF["transition", "constant_selfing"]
+  bayes_rejection[i] <-
+    model_choice_result[[i]]$rejection$BayesF["transition", "constant_selfing"]
+  bayes_mnlogistic[i] <-
+    model_choice_result[[i]]$mnlogistic$BayesF["transition", "constant_selfing"]
 }
+bayes_results <- list("podid" = podindex,
+                      "rejection" = bayes_rejection,
+                      "mnlogistic" = bayes_mnlogistic)
 
 # save Bayes Factors RDS
-
+saveRDS(bayes_results, file = snakemake@output$bayes_factors)
 
 
 # plot
 pdf(snakemake@output$bayes_plot)
-plot(podindex, bayes_rejection, log="y")
-plot(podindex, bayes_mnlogistic, log="y")
+plot(podindex, bayes_rejection, log = "y")
+plot(podindex, bayes_mnlogistic, log = "y")
 dev.off()

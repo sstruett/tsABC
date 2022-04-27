@@ -31,7 +31,7 @@ for npy in snakemake.input.npys:
     read_data_list[
         np.where(podid == np.array(snakemake.params.podid_wc))[0][0]
     ] = np.load(npy)
-read_data = np.array(read_data_list)
+read_data = np.array(read_data_list, dtype=float)
 
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
