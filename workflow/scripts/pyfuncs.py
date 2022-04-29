@@ -217,10 +217,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
                 [
                     "\n",
                     "_" * 80,
-                    "\nDemography for simulation\n",
-                    "This demography is copy pasted from the creation of the",
-                    "two phases, which we need to change the recombination rate",
-                    "through time.\n\n",
+                    "\nDemography for simulation\n\n",
                     str(demography),
                     "\n" + "=" * 80,
                 ]
