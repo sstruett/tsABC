@@ -45,8 +45,8 @@ ABC:
       polarised: False
     LD:
       # number of random SNPs to take into account for the LD calculation
-      npos: 2e3
-      breaks: 
+      npos: 5e2
+      breaks:  # which breakpoints to use for discretization
         - 1
         - 6105.472
         - 11379.62
@@ -80,7 +80,7 @@ ABC:
     do_model_choice: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 85426  # Do not change this
-    nsim: 10000  # number of simulations for the alternative model in the ABC
+    nsim: 4500  # number of simulations for the alternative model in the ABC
     # id of the first simulation for this workflow. this is the index that is used
     # to pick the random seed number 
     first_simid: 0
