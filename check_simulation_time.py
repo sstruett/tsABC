@@ -47,10 +47,12 @@ def get_median_duration_from_logs(log_dir, q=[0.025, 0.25, 0.5, 0.75, 0.975]):
 
 my_dirs = [
     "logs/module01/simulate_treeseqs/",
-    "logs/module01/calculate_sumstats/",
-    "logs/module01/calculate_masked_sumstats",
     "logs/module01/alternative_model_simulate_treeseqs",
+
+    "logs/module01/calculate_sumstats/",
     "logs/module01/alternative_model_calculate_sumstats",
+    
+    "logs/module01/calculate_masked_sumstats",
     "logs/module01/alternative_model_calculate_masked_sumstats",
 ]
 
