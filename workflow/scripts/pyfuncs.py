@@ -132,7 +132,7 @@ def simulate_treesequence_under_model(params, rule_parameters, rng, log):
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated ancestry", file=logfile)
 
-    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
     ts_mutated = msprime.sim_mutations(
         ts,
         rate=rule_parameters["mutrate"],
@@ -235,7 +235,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated ancestry", file=logfile)
 
-    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
     ts_mutated = msprime.sim_mutations(
         ts,
         rate=rule_parameters["mutrate"],
@@ -276,7 +276,7 @@ def simulate_transition_to_selfing(param_dict_list, rng):
         A single tree sequence
     """
     # ssimulate phase zero - selfing
-    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
     ts_phase_zero = msprime.sim_ancestry(
         samples=param_dict_list[0]["samples"],
         demography=param_dict_list[0]["demography"],
@@ -300,7 +300,7 @@ def simulate_transition_to_selfing(param_dict_list, rng):
     )
 
     # simulate phase one - outcrossing
-    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
     ts_phase_one = msprime.sim_ancestry(
         demography=param_dict_list[1]["demography"],
         discrete_genome=True,
@@ -345,7 +345,7 @@ def simulate_popsize_change_with_constant_selfing(param_dict, rng):
         A single tree sequence
     """
     # ssimulate phase zero - selfing
-    seed = rng.integers(low=1, high=2 ** 32 - 1, size=1)
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
     ts_raw = msprime.sim_ancestry(
         samples=param_dict["samples"],
         demography=param_dict["demography"],
@@ -795,10 +795,9 @@ def filter_mask_for_disjoint_intervals(mask, log=False):
             if prev_end > start:
                 overlapping_intervals.append(interval_id)
 
-
     # remove all intervals with zero length
     counter = 0
-    while any(mask[:,0] == mask[:,1]):
+    while any(mask[:, 0] == mask[:, 1]):
         counter += 1
         if counter > 1e7:
             sys.exit(
@@ -809,9 +808,8 @@ def filter_mask_for_disjoint_intervals(mask, log=False):
                 + "value to a higher threshold."
             )
 
-        for maskid in  np.where(mask[:,0] >= mask[:,1])[0]:
+        for maskid in np.where(mask[:, 0] >= mask[:, 1])[0]:
             mask = np.delete(mask, maskid, axis=0)
-
 
     # log
     if log:

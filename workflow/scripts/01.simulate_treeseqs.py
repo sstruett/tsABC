@@ -57,6 +57,7 @@ end = min(
     int(float(snakemake.config["ABC"]["simulations"]["nsim"])),
 )
 
+assert start < end, "simid (Simulation IDs) maldefined, you will not simulate anything"
 
 # run the simulations
 treesequence_list = []

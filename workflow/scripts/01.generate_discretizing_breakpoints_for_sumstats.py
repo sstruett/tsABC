@@ -47,7 +47,7 @@ for sumstat in unique_sumstats:
         )
     elif sumstat == "TM_WIN":
         # Loading list of tree sequences
-        with open(snakemake.input.tsl[0], "rb") as tsl_file:  
+        with open(snakemake.input.tsl[0], "rb") as tsl_file:
             tsl = pickle.load(tsl_file)
 
         # random number generator to choose the haplotype per individual
@@ -55,10 +55,10 @@ for sumstat in unique_sumstats:
 
         # calculate the data-based breakspoints
         breaks = pyfuncs.find_breakpoints_for_TM_WIN(
-            tsl = tsl,
-            specs = snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"],
-            rng = rng,
-            log = snakemake.log.log1
+            tsl=tsl,
+            specs=snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"],
+            rng=rng,
+            log=snakemake.log.log1,
         )
 
     # test if they belong to the sumstats that are implemented, may need to

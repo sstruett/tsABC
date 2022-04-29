@@ -45,7 +45,7 @@ ABC:
       polarised: False
     LD:
       # number of random SNPs to take into account for the LD calculation
-      npos: 2e2
+      npos: 2e3
       breaks: 
         - 1
         - 6105.472

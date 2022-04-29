@@ -31,11 +31,11 @@
 # Updating files
 
 ## Workflow
- + snakefmt, $ for f in workflow/rules/*.smk; do echo $f; snakefmt $f; sleep 1; done; sleep 1; f="workflow/Snakefile"; echo $f; snakefmt $f
+ + snakefmt, e. g. $ for f in workflow/rules/*.smk; do echo $f; snakefmt $f; sleep 1; done; sleep 1; f="workflow/Snakefile"; echo $f; snakefmt $f
  + snakemake --lint
 
 ## Python scripts
- + black
+ + black; e. g. $ for f in workflow/scripts/*.py; do echo $f; black $f ; done
  + pylint
 
 ## Yaml

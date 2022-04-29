@@ -54,9 +54,10 @@ def main(simid):
 start = int(float(snakemake.wildcards.simid))
 end = min(
     start + int(float(snakemake.config["ABC"]["jobluster_simulations"])),
-    int(float(snakemake.config["ABC"]["simulations"]["nsim"])),
+    int(float(snakemake.config["ABC"]["alternative_model"]["nsim"])),
 )
 
+assert start < end, "simid (Simulation IDs) maldefined, you will not simulate anything"
 
 # run the simulations
 treesequence_list = []

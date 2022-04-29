@@ -123,7 +123,7 @@ if "SFS" in listed_sumstats:
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
 
     dataframe_sumstats_sfs = np.concatenate(dataframe_sumstats_sfs, axis=0).reshape(
-    (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
+        (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
     )
 else:
     dataframe_sumstats_sfs = np.empty(shape=0)
@@ -153,7 +153,7 @@ if "LD" in listed_sumstats:
     dataframe_sumstats_ld = dataframe_sumstats_ld.mean(axis=1)
 
     dataframe_sumstats_ld = np.concatenate(dataframe_sumstats_ld, axis=0).reshape(
-    (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
+        (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
     )
 else:
     dataframe_sumstats_ld = np.empty(shape=0)
@@ -181,9 +181,9 @@ if "TM_WIN" in listed_sumstats:
 
     # get average of tm_win over the different loci
     dataframe_sumstats_tm_win = dataframe_sumstats_tm_win.mean(axis=1)
-    dataframe_sumstats_tm_win = np.concatenate(dataframe_sumstats_tm_win, axis=0).reshape(
-    (len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0])
-    )
+    dataframe_sumstats_tm_win = np.concatenate(
+        dataframe_sumstats_tm_win, axis=0
+    ).reshape((len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0]))
 else:
     dataframe_sumstats_tm_win = np.empty(shape=0)
 
