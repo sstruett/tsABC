@@ -253,7 +253,149 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
 
 
 def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
-    sys.exit("#" * 600 + " inside simulate_treesequence_under_six_parameter_model")
+        """Simulates a tree sequence
+
+    The simulation model is defined in this function. The simulation takes place
+    using the provided parameters. We only need two phases for the change in
+    effective recombination rate. The change of a model is implemented already.
+
+    Args:
+        params: A list containing the provided parameters. Here we use a 6
+            parameter model
+        rule_parameters: Non random parameters of the model
+        rng: The provided random number generator
+        log: String, filepath to log file, will append some logs to it
+
+    Returns:
+        A single tree sequnce, with mutations
+    """
+    # create demography for phase zero
+    demography_phase_zero = msprime.Demography()
+    demography_phase_zero.add_population(
+        initial_size=rescale_population_size_by_selfing(
+            population_size=params[0], selfing_rate=params[1], make_int=True
+        ),
+        description="Single population",
+    )
+
+    # create simulation model for phase zero
+    model_phase_zero = [
+        msprime.DiscreteTimeWrightFisher(
+            duration=min(rule_parameters["dtwf"], params[3])
+        ),
+        msprime.SmcPrimeApproxCoalescent(),
+    ]
+
+    # prepare the paramters for the simulation; this is the model implementation
+    param_dict_list = [{}, {}]  # one dict per phase
+    # phase 0 - selfing
+    param_dict_list[0]["samples"] = rule_parameters["nsam"]
+    param_dict_list[0]["demography"] = demography_phase_zero
+    param_dict_list[0]["sequence_length"] = int(float(rule_parameters["loclen"]))
+    param_dict_list[0][
+        "recombination_rate_effective"
+    ] = rescale_recombination_rate_by_selfing(
+        recombination_rate=rule_parameters["recrate"], selfing_rate=params[1]
+    )
+    param_dict_list[0]["msprime_model"] = model_phase_zero
+    param_dict_list[0]["end_time"] = params[3]
+
+    # create demography for phase one
+    demography_phase_one = msprime.Demography()
+    demography_phase_one.add_population(
+        initial_size=rescale_population_size_by_selfing(
+            population_size=params[0], selfing_rate=params[2], make_int=True
+        ),
+        description="Single population",
+    )
+
+    # create simulation model for phase one
+    model_phase_one = [
+        msprime.DiscreteTimeWrightFisher(
+            duration=max(0, rule_parameters["dtwf"] - params[3])
+        ),
+        msprime.SmcPrimeApproxCoalescent(),
+    ]
+
+    # phase 1 - outcrossing
+    param_dict_list[1]["demography"] = demography_phase_one
+    param_dict_list[1][
+        "recombination_rate_effective"
+    ] = rescale_recombination_rate_by_selfing(
+        recombination_rate=rule_parameters["recrate"], selfing_rate=params[2]
+    )
+    param_dict_list[1]["msprime_model"] = model_phase_one
+    param_dict_list[1]["start_time"] = params[3]
+
+    # log
+    with open(log, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print("created model", file=logfile)
+
+    demography_total = msprime.Demography()
+    demography_total.add_population(
+        initial_size=rescale_population_size_by_selfing(
+            population_size=params[0], selfing_rate=params[1], make_int=True
+        ),
+        description="Single population",
+    )
+    demography_total.add_population(
+        initial_size=rescale_population_size_by_selfing(
+            population_size=params[0], selfing_rate=params[2], make_int=True
+        ),
+        description="Single population",
+    )
+
+    # log
+    with open(log, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print(
+            "".join(
+                [
+                    "\n",
+                    "_" * 80,
+                    "\nDemography for simulation\n",
+                    "This demography is copy pasted from the creation of the",
+                    "two phases, which we need to change the recombination rate",
+                    "through time.\n\n",
+                    str(demography_total),
+                    "\n" + "=" * 80,
+                ]
+            ),
+            file=logfile,
+        )
+
+    ts = simulate_transition_to_selfing(param_dict_list, rng)
+
+    # log
+    with open(log, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print("simulated ancestry", file=logfile)
+
+    seed = rng.integers(low=1, high=2**32 - 1, size=1)
+    ts_mutated = msprime.sim_mutations(
+        ts,
+        rate=rule_parameters["mutrate"],
+        random_seed=seed,
+        model=None,
+        start_time=None,
+        end_time=None,
+        discrete_genome=True,
+        keep=True,
+    )
+
+    # log
+    with open(log, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print("simulated mutations", file=logfile)
+
+
+    sys.exit("#" * 600 + 
+        " inside simulate_treesequence_under_six_parameter_model\n" + 
+        " did you implement the six parameter model already?")
+
+    return ts_mutated
+    
 
 
 def simulate_transition_to_selfing(param_dict_list, rng):

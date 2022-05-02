@@ -83,6 +83,7 @@ for treeid, treeseq in np.ndenumerate(tsl):
     tsl_masked[treeid] = treeseq.delete_intervals(
         mask[chromid], simplify=True, record_provenance=True
     )
+
 del tsl
 tsl = tsl_masked
 del tsl_masked

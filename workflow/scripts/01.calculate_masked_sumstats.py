@@ -216,15 +216,6 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     )
 
 
-print(tsl[0])
-_ = [
-    print(f)
-    for f in (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win)
-]
-
-
-sys.exit("#" * 600 + " what is it?")
-
 # fuse the summarizing stats list into a 2d-np.array, each row containing the
 # summarizing stats of a single simulated tree sequence
 dataframe_sumstats = np.concatenate(
