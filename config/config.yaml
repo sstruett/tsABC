@@ -148,11 +148,11 @@ ABC:
         # The region should be chosen in a way that the mask file indexes the
         # correct exonic regions
         chosen_region:
-          - [18_000_000, 19_000_000]  # start/end for chromosome 1
-          - [18_000_000, 19_000_000]  # start/end for chromosome 2
-          - [18_000_000, 19_000_000]  # start/end for chromosome 3
-          - [18_000_000, 19_000_000]  # start/end for chromosome 4
-          - [18_000_000, 19_000_000]  # start/end for chromosome 5
+          - [6_500_000,   7_500_000]  # start/end for chromosome 1
+          - [16_000_000, 17_000_000]  # start/end for chromosome 2
+          - [6_000_000,   7_000_000]  # start/end for chromosome 3
+          - [13_000_000, 14_000_000]  # start/end for chromosome 4
+          - [1_500_000,   2_500_000]  # start/end for chromosome 5
         popid:
           CEU:  # this name will be the population id
             path: "path/to/CEU.individual.identifier_list_CEU"
