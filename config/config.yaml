@@ -128,6 +128,8 @@ ABC:
     # reduce computational load to create the dag
     jobluster_simulations: 250
 
+    # quatrupels: min, max, numeric type (float, int), distribution type
+    # (uniform, loguniform)
     priors:
       - [1e3, 1e5, int, loguniform]  # param 1: present pop size
       - [1e3, 1e5, int, loguniform]  # param 2: ancestral pop size
