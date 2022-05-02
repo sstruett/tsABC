@@ -51,7 +51,7 @@ rule simulate_athal_treeseqs:
         dtwf=int(float(config["ABC"]["simulations"]["dtwf"])),
         model=config["ABC"]["athaliana"],
     script:
-        "../scripts/01.simulate_sixparmodel_treeseqs.py"
+        "../scripts/04.simulate_sixparmodel_treeseqs.py"
 
 
 rule confirm_athal_params_for_loci_being_same_and_save_params:
