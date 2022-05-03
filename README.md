@@ -5,6 +5,7 @@
 
 ## IMPORTANT
  + Why is there no LD stats in statcomp 0, maybe use more SNPs to calculate all classes, but make sure that NaN is not a problem
+ + confirm the downsampling for model choice works correctly
 
 ## still to implement
  + parameter estimate
@@ -20,9 +21,11 @@
  + add checking that provided regions for athal are same as length of simulation
  + make plotting in target_files() function become true
  + summarize the model choice with the classification; produce a table also: pods(rows) --> percentage of each support class
+ + configuration sanity; check that number of athal regions and loci are the same
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
+ + implement to observe the data on a much larger region of thaliana and make the estimate on the unmasked simulations
 
 ## Possible improvement
 
