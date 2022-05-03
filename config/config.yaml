@@ -46,7 +46,7 @@ ABC:
       polarised: False
     LD:
       # number of random SNPs to take into account for the LD calculation
-      npos: 5e2
+      npos: 2e2
       breaks:  # which breakpoints to use for discretization
         - 1
         - 6105.472

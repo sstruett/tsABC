@@ -182,7 +182,11 @@ rule calculate_athal_observations:
         sumstats="results/athal/observed/population_{popid}.unmasked.feather",
     input:
         athal_treeseq=config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
+        sample_list=lambda wildcards: config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][wildcards.popid]["path"],
         breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
+        maskfiles=expand("resources/mask/locus_{chromid}.txt",
+            chromid=range(5),  # the chromosome ids are 0 based
+            )
     log:
         log1="logs/module04/calculate_athal_observations/population_{popid}.log",
     conda:
@@ -190,6 +194,9 @@ rule calculate_athal_observations:
     threads: 1
     params:
         masked=False,
+        chrom_multiplier=float(config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chrom_multiplier"]),
+        seed=int(float(config["ABC"]["athaliana"]["observations"]["seed"])),
+        sumstats=config["ABC"]["sumstats"],
     script:
         "../scripts/04.calculate_athal_observations.py"
 
