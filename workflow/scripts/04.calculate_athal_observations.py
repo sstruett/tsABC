@@ -1,5 +1,12 @@
 """
-caluclate summarizing statistics on the simulated treesequences
+caluclate summarizing statistics on the inferred treesequences of the 1001
+genomes. This script does following steps:
+  + loading and subsetting treeseq to the population;
+  + extracting one treesequence per chosen region for each chromosome;
+  + masking if asked for;
+  + create a maximum number of subsets of the configured sample size;
+  + calculate the summary statistics on each of these subsets;
+  + average the summary statistics over the different chromosomal regions
 """
 
 
@@ -11,38 +18,179 @@ import pickle
 import math
 import numpy as np
 import tskit
+import json
 import pyfuncs  # from file
 
 
 # log, create log file
 with open(snakemake.log.log1, "w", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
-    print("start calculating summarizing statistics", file=logfile)
+    print(
+        "start calculating observed summarizing statistics on Arabidopsis thaliana data",
+        file=logfile,
+    )
 
 
-# Loading list of tree sequences
-with open(snakemake.input.tsl, "rb") as tsl_file:
-    tsl = np.array(pickle.load(tsl_file))
+# read sample names
+sample_names = np.loadtxt(snakemake.input.sample_list, dtype=str)
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(
+        f"read sample names from {snakemake.input.sample_list}",
+        file=logfile,
+    )
 
 
-# sample only one haplotype per individual
-rng = np.random.default_rng(snakemake.params.seed)
-tsl_haploid = np.empty(tsl.shape, dtype=tskit.TreeSequence)
-for treeid, treeseq in np.ndenumerate(tsl):
-    sample_set = [
-        this_individual.nodes[rng.integers(low=0, high=2)]
-        for this_individual in treeseq.individuals()
-    ]
-    tsl_haploid[treeid] = treeseq.simplify(samples=sample_set)
-del tsl
-tsl = tsl_haploid
-del tsl_haploid
+# read tree sequence
+treeseq_athal = tskit.load(snakemake.input.athal_treeseq)
 
 
 # log
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
-    print("read the tree sequences", file=logfile)
+    print(
+        f"read treeseq of Arabidopsis thaliana from '{snakemake.input.athal_treeseq}'",
+        file=logfile,
+    )
+
+
+# find the node ids for the sample of the population
+population_sample = []
+for individual in treeseq_athal.individuals():
+    if str(json.loads(individual.metadata)["id"]) in sample_names:
+        population_sample.extend(individual.nodes)
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("created the node id sample set for the given population", file=logfile)
+
+
+# sample treeseq to provided samples
+treeseq_athal_population = treeseq_athal.simplify(samples=population_sample)
+del treeseq_athal
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("simplified the tree sequence to the given population", file=logfile)
+
+
+# get the chromosomal regions from the config file
+chromosome_regions = []
+for chromid, (start, stop) in enumerate(
+    snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"][
+        "chosen_region"
+    ],
+    start=1,
+):
+    start += snakemake.params.chrom_multiplier * chromid
+    stop += snakemake.params.chrom_multiplier * chromid
+    chromosome_regions.append((start, stop))
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("prepared regions", file=logfile)
+
+
+# chop down to regions
+treeseq_list = []
+for chromid, (start, stop) in enumerate(chromosome_regions):
+    treeseq_list.append(treeseq_athal_population.keep_intervals([(start, stop)]).trim())
+
+    # log
+    with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print(
+            f"prepared regions for chromsome {chromid + 1} of {len(chromosome_regions)}",
+            file=logfile,
+        )
+
+del treeseq_athal_population
+
+
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print("created region treeseq list (1 per region of each chromosome)", file=logfile)
+
+
+# mask if asked; make sure the parameter is a boolean and then mask or not
+do_mask = pyfuncs.check_masking_parameter(snakemake.params.masked)
+
+# read and prepare mask files
+if do_mask:
+    mask = []
+    for region_id, maskfile in enumerate(snakemake.input.maskfiles):
+        this_mask = np.loadtxt(maskfile, dtype=int)
+        region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
+            "treeseq_1001"
+        ]["chosen_region"][region_id]
+        region_mask = this_mask[
+            (region_start <= this_mask[:, 0]) & (region_end > this_mask[:, 1])
+        ]
+        this_mask = region_mask - region_start
+        del region_mask
+
+        # filter mask for disjoint intervals
+        mask.append(
+            pyfuncs.filter_mask_for_disjoint_intervals(
+                this_mask, log=snakemake.log.log1
+            )
+        )
+
+    # log
+    with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print(
+            f"prepared coordinates to mask the exons for {len(mask)} chromosomes",
+            file=logfile,
+        )
+
+    treeseq_list_masked = []
+    for treeid, (treeseq_chrom, mask_chrom) in enumerate(
+        zip(treeseq_list, mask), start=1
+    ):
+        treeseq_list_masked.append(
+            treeseq_chrom.delete_intervals(
+                mask_chrom, simplify=True, record_provenance=True
+            )
+        )
+
+        # log
+        with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                f"masked {treeid} of {len(mask)} chromosomes",
+                file=logfile,
+            )
+
+    treeseq_list = treeseq_list_masked
+    del treeseq_list_masked
+else:
+    # log, create log file
+    with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print("will not mask for exons", file=logfile)
+
+
+# create subsample from treesequence
+rng = np.random.default_rng(snakemake.params.seed)
+specs = {
+    "num_observations": int(
+        float(snakemake.config["ABC"]["athaliana"]["observations"]["num_observations"])
+    ),
+    "nsam": int(float(snakemake.config["ABC"]["simulations"]["nsam"])),
+}
+tsl = pyfuncs.create_subsets_from_treeseqlist(
+    treeseq_list, specs, rng, snakemake.log.log1
+)
 
 
 # read the breakpoint files
@@ -119,8 +267,18 @@ if "SFS" in listed_sumstats:
         # reassign to the dataframe sumstat
         dataframe_sumstats_sfs = np.array(new_sfs_dataframe)
 
+    print(dataframe_sumstats_sfs.shape)
+
     # get average of sfs over the different loci
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
+
+
+    print(dataframe_sumstats_sfs.shape)
+
+    sys.exit(
+        "#" * 600
+        + " please check here if the calculation of the mean is done correctly on the correct axis"
+    )
 
     dataframe_sumstats_sfs = np.concatenate(dataframe_sumstats_sfs, axis=0).reshape(
         (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])

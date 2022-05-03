@@ -75,7 +75,7 @@ rule confirm_athal_params_for_loci_being_same_and_save_params:
 rule calculate_athal_sumstats:
     output:
         npy="results/athal/simulations/sumstats/sim_{simid}.locus_{locid}.npy",
-        sumstat_count="results/athal/simulations/sumstats/sim_{simid}.locus_{locid}.names.npy"
+        sumstat_count="results/athal/simulations/sumstats/sim_{simid}.locus_{locid}.names.npy",
     input:
         tsl=rules.simulate_athal_treeseqs.output.tsl,
         breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
@@ -89,7 +89,7 @@ rule calculate_athal_sumstats:
     # resources:
     params:
         sumstats=config["ABC"]["sumstats"],
-        seed=int(float(config["ABC"]["sumstats_specs"]["seed_athal"]))
+        seed=int(float(config["ABC"]["sumstats_specs"]["seed_athal"])),
     script:
         "../scripts/01.calculate_sumstats.py"
 
@@ -97,7 +97,7 @@ rule calculate_athal_sumstats:
 rule calculate_athal_masked_sumstats:
     output:
         npy="results/athal/simulations/sumstats_masked/sim_{simid}.locus_{locid}.npy",
-        sumstat_count="results/athal/simulations/sumstats_masked/sim_{simid}.locus_{locid}.names.npy"
+        sumstat_count="results/athal/simulations/sumstats_masked/sim_{simid}.locus_{locid}.names.npy",
     input:
         tsl=rules.simulate_athal_treeseqs.output.tsl,
         breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
@@ -112,7 +112,7 @@ rule calculate_athal_masked_sumstats:
     # resources:
     params:
         sumstats=config["ABC"]["sumstats"],
-        seed=int(float(config["ABC"]["sumstats_specs"]["seed"]))
+        seed=int(float(config["ABC"]["sumstats_specs"]["seed"])),
     script:
         "../scripts/01.calculate_masked_sumstats.py"
 
@@ -134,7 +134,7 @@ rule aggregate_athal_sumstats:
         params=expand(
             "results/athal/simulations/params/sim_{simid}.params.npy",
             simid=wildcards_simid(config),
-        )
+        ),
     log:
         log1="logs/module04/aggregate_athal_sumstats.log",
     conda:
@@ -142,15 +142,15 @@ rule aggregate_athal_sumstats:
     threads: 1
     # resources:
     params:
-        simid_wc = wildcards_simid(config),
-        locid_wc = wildcards_locid(config)
+        simid_wc=wildcards_simid(config),
+        locid_wc=wildcards_locid(config),
     script:
         "../scripts/01.aggregate_sumstats.py"
 
 
 rule aggregate_athal_sumstats_masked:
     output:
-        masked="results/athal/simulations/sumstats.masked.feather"
+        masked="results/athal/simulations/sumstats.masked.feather",
     input:
         npys_masked=expand(
             rules.calculate_athal_masked_sumstats.output.npy,
@@ -161,7 +161,7 @@ rule aggregate_athal_sumstats_masked:
             rules.calculate_masked_sumstats.output.sumstat_count,
             simid=wildcards_simid(config),
             locid=wildcards_locid(config),
-            ),
+        ),
         params=expand(
             rules.confirm_athal_params_for_loci_being_same_and_save_params.output.params,
             simid=wildcards_simid(config),
@@ -179,12 +179,12 @@ rule aggregate_athal_sumstats_masked:
 
 rule calculate_athal_observations:
     output:
-        sumstats="results/athal/observed/population_{popid}.unmasked.feather"
+        sumstats="results/athal/observed/population_{popid}.unmasked.feather",
     input:
         athal_treeseq=config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
         breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
     log:
-        log1="logs/module04/calculate_athal_observations/population_{popid}.log"
+        log1="logs/module04/calculate_athal_observations/population_{popid}.log",
     conda:
         "config/env.yaml"
     threads: 1
@@ -199,57 +199,67 @@ rule calculate_athal_observations_masked:
         sumstats="results/athal/observed/population_{popid}.masked.feather"
     input:
         athal_treeseq=config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
+        sample_list=lambda wildcards: config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][wildcards.popid]["path"],
         breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
         maskfiles=expand("resources/mask/locus_{chromid}.txt",
             chromid=range(5),  # the chromosome ids are 0 based
             )
     log:
-        log1="logs/module04/calculate_athal_observations/population_{popid}.log"
+        log1="logs/module04/calculate_athal_observations_masked/population_{popid}.log"
     conda:
         "config/env.yaml"
     threads: 1
     params:
         masked=True,
+        chrom_multiplier=float(config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chrom_multiplier"]),
+        seed=int(float(config["ABC"]["athaliana"]["observations"]["seed"])),
+        sumstats=config["ABC"]["sumstats"],
     script:
         "../scripts/04.calculate_athal_observations.py"
+
+
 
 
 rule aggregate_athal_observations:
     output:
         sumstats="results/athal/observed/sumstats.feather",
         # maps the sumstats (row) to all the specifications of the observation
-        identifier="results/athal/observed/dataset.map.pickle"
+        identifier="results/athal/observed/dataset.map.pickle",
     input:
-        observations=expand("results/athal/observed/population_{popid}.unmasked.feather",
-            popid=wildcards_popid(config))
+        observations=expand(
+            "results/athal/observed/population_{popid}.unmasked.feather",
+            popid=wildcards_popid(config),
+        ),
     log:
-        log1="logs/module04/aggregate_athal_observations.log"
-    #conda:
+        log1="logs/module04/aggregate_athal_observations.log",
+    # conda:
     #    "config/env.yaml"
-    group: "athal_observation"
+    group:
+        "athal_observation"
     threads: 1
     run:
-        sys.exit("#"*600 + " inside aggregate_athal_observations")
+        sys.exit("#" * 600 + " inside aggregate_athal_observations")
 
 
 rule aggregate_athal_observations_masked:
     output:
         sumstats="results/athal/observed/sumstats.masked.feather",
         # maps the sumstats (row) to all the specifications of the observation
-        identifier="results/athal/observed/dataset.masked.map.pickle"
+        identifier="results/athal/observed/dataset.masked.map.pickle",
     input:
-        observations=expand("results/athal/observed/population_{popid}.masked.feather",
+        observations=expand(
+            "results/athal/observed/population_{popid}.masked.feather",
             popid=wildcards_popid(config),
-            )
+        ),
     log:
-        log1="logs/module04/aggregate_athal_observations_masked.log"
-    #conda:
+        log1="logs/module04/aggregate_athal_observations_masked.log",
+    # conda:
     #    "config/env.yaml"
-    group: "athal_observation"
+    group:
+        "athal_observation"
     threads: 1
     run:
-        sys.exit("#"*600 + " inside aggregate_athal_observations")
-
+        sys.exit("#" * 600 + " inside aggregate_athal_observations")
 
 
 rule athal_parameter_estimation:
@@ -298,9 +308,9 @@ rule aggregate_athal_parameter_estimation:
         ),
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation.log",
-    #conda:
+    # conda:
     #    "config/env.yaml"
-    params:
+    # params:
     run:
         sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation\n" + "")
 
@@ -317,41 +327,47 @@ rule aggregate_athal_parameter_estimation_masked:
         ),
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation_masked.log",
-    #conda:
+    # conda:
     #    "config/env.yaml"
-    params:
+    # params:
     run:
-        sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + "")
+        sys.exit(
+            "#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + ""
+        )
 
 
 rule summarize_athal_param_estims:
     output:
         table="results/athal/summarized_athal_parameter_estimations.csv",
-        plot="results/athal/summarized_athal_parameter_estimations.pdf"
+        plot="results/athal/summarized_athal_parameter_estimations.pdf",
     input:
-        estims=rules.aggregate_athal_parameter_estimation.output.estims
+        estims=rules.aggregate_athal_parameter_estimation.output.estims,
     log:
-        log1="logs/module04/summarize_athal_param_estims.log"
-    #conda:
+        log1="logs/module04/summarize_athal_param_estims.log",
+    # conda:
     #    "config/env.yaml"
-    params:
+    # params:
     run:
-        sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + "")
+        sys.exit(
+            "#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + ""
+        )
 
 
 rule summarize_athal_param_estims_masked:
     output:
         table="results/athal/summarized_athal_parameter_estimations_masked.csv",
-        plot="results/athal/summarized_athal_parameter_estimations_masked.pdf"
+        plot="results/athal/summarized_athal_parameter_estimations_masked.pdf",
     input:
-        estims=rules.aggregate_athal_parameter_estimation_masked.output.estims
+        estims=rules.aggregate_athal_parameter_estimation_masked.output.estims,
     log:
-        log1="logs/module04/summarize_athal_param_estims_masked.log"
-    #conda:
+        log1="logs/module04/summarize_athal_param_estims_masked.log",
+    # conda:
     #    "config/env.yaml"
-    params:
+    # params:
     run:
-        sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + "")
+        sys.exit(
+            "#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + ""
+        )
 
 
 rule transform_athal_sumstats:

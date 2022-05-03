@@ -48,7 +48,7 @@ for mask_file in snakemake.input.mask:
     chromid = int(split[np.where(np.array(split) == "locus")[0].max() + 1])
 
     # load mask file
-    this_mask = np.loadtxt(mask_file).astype(int)
+    this_mask = np.loadtxt(mask_file, dtype=int)
     region_start, region_end = snakemake.config["ABC"]["athaliana"]["observations"][
         "treeseq_1001"
     ]["chosen_region"][chromid]
@@ -100,15 +100,15 @@ for breaks_filename in snakemake.input.breakpoints:
     if "SFS" in breaks_filename:
         with warnings.catch_warnings():  # will prevent warning if file is empty
             warnings.simplefilter("ignore")
-            breaks_sfs = np.loadtxt(breaks_filename)
+            breaks_sfs = np.loadtxt(breaks_filename, dtype=float)
     elif "LD" in breaks_filename:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            breaks_ld = np.loadtxt(breaks_filename)
+            breaks_ld = np.loadtxt(breaks_filename, dtype=float)
     elif "TM_WIN" in breaks_filename:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            breaks_tm_win = np.loadtxt(breaks_filename)
+            breaks_tm_win = np.loadtxt(breaks_filename, dtype=float)
 
 # log
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:

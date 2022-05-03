@@ -10,6 +10,7 @@ import tskit
 import msprime
 import itertools
 import warnings
+import math
 
 
 def simulate_treesequence_under_model(params, rule_parameters, rng, log):
@@ -253,7 +254,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
 
 
 def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
-        """Simulates a tree sequence
+    """Simulates a tree sequence
 
     The simulation model is defined in this function. The simulation takes place
     using the provided parameters. We only need two phases for the change in
@@ -389,13 +390,13 @@ def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated mutations", file=logfile)
 
-
-    sys.exit("#" * 600 + 
-        " inside simulate_treesequence_under_six_parameter_model\n" + 
-        " did you implement the six parameter model already?")
+    sys.exit(
+        "#" * 600
+        + " inside simulate_treesequence_under_six_parameter_model\n"
+        + " did you implement the six parameter model already?"
+    )
 
     return ts_mutated
-    
 
 
 def simulate_transition_to_selfing(param_dict_list, rng):
@@ -528,7 +529,7 @@ def draw_parameter_from_prior(prior_definition, rng):
 
     Args:
         prior_definition: A list containing 4 values: min, max, numeric type
-            (float, int), distribution type (uniform, locuniform)
+            (float, int), distribution type (uniform, loguniform)
         rng: The provided random number generator
 
     Returns:
@@ -769,7 +770,7 @@ def calculate_ld(treeseq, specs, breaks, rng, log):
     with open(log, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
         print(
-            "error with discrete genome calculating LD statistics",
+            "error with discrete genome calculating LD statistics: " + str(ERRORS),
             file=logfile,
         )
 
@@ -960,3 +961,220 @@ def filter_mask_for_disjoint_intervals(mask, log=False):
             )
 
     return mask
+
+
+def check_masking_parameter(do_masking):
+    """
+    based on the parameter value of the rule, which supposedly is a boolean, but
+    sometimes a string, return a boolean
+    """
+    #
+    if type(do_masking) == str:
+        do_masking = to_masking.casefold()
+        assert do_masking in [
+            "true",
+            "false",
+        ], "the masking parameter must be bool or str that is transferable to bool"
+
+        # translate string to bool
+        if do_masking == "true":
+            do_masking = True
+        elif do_maksing == "false":
+            do_masking = False
+        else:
+            sys.exit(
+                "#" * 600
+                + "We are inside check_masking_parameter(), but under no condition we should ever reach here!"
+            )
+
+    else:
+        assert (
+            type(do_masking) == bool
+        ), "the masking parameter must be bool or str that is transferable to bool"
+
+    return do_masking
+
+
+def random_subsets_from_iterable(
+    iterable, size, nsam, rng, combination_threshold=1e5, log=False
+):
+    """Random subsamples from iterable
+
+    This function randomly samples a subset of size size, repeats the sampling
+    nsam times, but all being different. In precise, all possible combinations
+    are indexed and from them will be sampled by random. If the number of
+    possible combinations exceeds the combination_threshold, the subsamples
+    will be random and possibly not unique. If the threshold is high, the
+    calculation may take very long.
+
+    Args:
+        iterable: iterable to sample from
+        size: subsample size
+        nsam: number how often to repeat the sampling
+        combination_threshold: numeric, threshold upon which the sampling will
+            not take place indexbased, it may result in sample sets not being
+            unique
+
+    Returns:
+        2d-np.arryay, sample sets
+    """
+    max_combinations = math.comb(len(iterable), min(size, len(iterable)))
+
+    # limit sample size to max possible combinations
+    nsam = min(nsam, max_combinations)
+
+    # create sample subsets
+    sampled_combinations = []
+
+    # only define index to avoid same sample set if there are no huge number of simulations
+    if max_combinations > 1e5:
+        for sampelid in range(nsam):
+            sampled_combinations.append(
+                rng.choice(iterable, size=size, replace=False, shuffle=False)
+            )
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    "created random subsamples (no assurance for being unique)",
+                    file=logfile,
+                )
+
+    else:
+        indexes = rng.choice(
+            range(max_combinations), size=nsam, replace=False, shuffle=False
+        )
+        max_idx = max(indexes)
+
+        # generate samples
+        sampled_combinations = []
+        for combid, combo in zip(
+            itertools.count(), itertools.combinations(iterable, size)
+        ):
+            if combid in indexes:
+                sampled_combinations.append(combo)
+            elif combid > max_idx:
+                break
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    "created index-based random (unique) subsamples",
+                    file=logfile,
+                )
+
+    return np.array(sampled_combinations)
+
+
+def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
+    """Obtain subsets samples of treeseqs
+
+    This function aims to provide subset samples of a treesequence list. The
+    input is a treesequence list with one treesequence per region/chromosome
+    with a large sample size. This function will resample from the treesequence
+    and return a list of lists to maintain the region/chromosome structure of
+    the input list.
+
+    Args:
+        tsl: treesequences
+        specs: dict, two entries: 1) "num_observations": this is the
+            maximum number of subsets to perform; 2) "nsam": sample size
+        rng: random number generator to calculate which sites to use (see specs)
+        log: str, logfile to print errors when calculating ld
+
+    Returns:
+        np.array of tskit.treesequences with added dimension compared the input
+            tsl
+    """
+    # log
+    if log:
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                "subsetting to final samplesize and resampling",
+                file=logfile,
+            )
+
+    for treeid, (treeseq1, treeseq2) in enumerate(zip(tsl[:], tsl[1:])):
+        assert list(treeseq1.samples()) == list(
+            treeseq2.samples()
+        ), f"samples different in different chromosomes: {treeid} and {treeid +1}"
+        assert list(treeseq1.individuals()) == list(
+            treeseq2.individuals()
+        ), f"individuals different in different chromosomes: {treeid} and {treeid +1}"
+
+    # log
+    if log:
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                f"total samples/individuals: {tsl[0].num_samples}/{tsl[0].num_individuals}; subsample size {specs['nsam']}",
+                file=logfile,
+            )
+
+    # assure the trees being haplotype
+    tsl_haploid = []
+    for tsid, ts in enumerate(tsl):
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculating diversity on {tsid}-th treeseq (of {len(tsl)})",
+                    file=logfile,
+                )
+
+        # chose one sample per individual
+        sample_set = [
+            this_individual.nodes[rng.integers(low=0, high=len(this_individual.nodes))]
+            for this_individual in ts.individuals()
+        ]
+
+        # simplify the treesequence to the sampled haplotypes
+        tsl_haploid.append(ts.simplify(samples=sample_set))
+
+    tsl = tsl_haploid
+    del tsl_haploid
+
+    # log
+    if log:
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                "trees are haploid",
+                file=logfile,
+            )
+
+    # create sample list
+    sample_set_list = random_subsets_from_iterable(
+        tsl[0].samples(), specs["nsam"], specs["num_observations"], rng, log=log
+    )
+
+    # subset trees and provide multi-dim np.array of trees
+    treeseq_list = [[] for _ in range(len(tsl))]
+    for sample_id, sample_set in enumerate(sample_set_list, start=1):
+        for tsid, ts in enumerate(tsl):
+            treeseq_list[tsid].append(ts.simplify(samples=sample_set))
+
+        # log
+        if log and (not (sample_id % 50) or sample_id == len(sample_set_list)):
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"subsampled treeseqs {sample_id} of {len(sample_set_list)}",
+                    file=logfile,
+                )
+
+
+    # log
+    if log and (not (sample_id % 50) or sample_id == len(sample_set_list)):
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print("finished treesequence subsampling", file=logfile)
+
+    
+    return np.array(treeseq_list)
