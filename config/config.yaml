@@ -18,7 +18,8 @@ ABC:
 
   simulations:
     nsim: 5000  # number of simulations for the ABC
-    nsam: 12  # number of sample haplotypes to simulate
+    # number of sample haplotypes to simulate (and to observe for athaliana)
+    nsam: 12
     nloci: 5  # number of independent loci (mimicking chromosomes)
     locuslen: 1e6  # length of each locus
     mutrate: 6.95e-9  # mutation rate
@@ -116,7 +117,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: False
+    do_thaliana: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations
@@ -141,23 +142,25 @@ ABC:
     observations:
       # maximum number of observations from the population
       num_observations: 1000
+      # initial seed to generate the random seed numbers for the simulations
+      seed: 97636  # Do not change this
       treeseq_1001:
         # path to the full 1001 genomes tree sequence
         path: "resources/athal/1135_tsinfer_tree_sequence.ts"
         chrom_multiplier: 1e8  # start of chromosomal position multiplier
         # The region should be chosen in a way that the mask file indexes the
         # correct exonic regions
-        chosen_region:
+        chosen_region:  # must provide one per chromosome/locus
           - [6_500_000,   7_500_000]  # start/end for chromosome 1
           - [16_000_000, 17_000_000]  # start/end for chromosome 2
           - [6_000_000,   7_000_000]  # start/end for chromosome 3
           - [13_000_000, 14_000_000]  # start/end for chromosome 4
           - [1_500_000,   2_500_000]  # start/end for chromosome 5
-        popid:
+        popid:  # the files contain the sample ids according to the 1001 genomes
           CEU:  # this name will be the population id
-            path: "path/to/CEU.individual.identifier_list_CEU"
+            path: "resources/athal/sample_populations/individual.identifier_list_CEU.txt"
           IBnr:  # this name will be the population id
-            path: "path/to/CEU.individual.identifier_list_IBnr"
+            path: "resources/athal/sample_populations/individual.identifier_list_IBnr.txt"
           Relicts:  # this name will be the population id
-            path: "path/to/CEU.individual.identifier_list_Relicts"
+            path: "resources/athal/sample_populations/individual.identifier_list_Relicts.txt"
 
