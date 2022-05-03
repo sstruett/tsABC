@@ -253,7 +253,6 @@ if "SFS" in listed_sumstats:
                     file=logfile,
                 )
 
-
     # check if the sfs shall be discretized as well; this usually is not
     # necessary as the sfs is a discrete statistic already
     if len(breaks):
@@ -276,7 +275,6 @@ if "SFS" in listed_sumstats:
 
         # reassign to the dataframe sumstat
         dataframe_sumstats_sfs = np.array(new_sfs_dataframe)
-
 
     # get average of sfs over the different loci
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
@@ -308,7 +306,6 @@ if "LD" in listed_sumstats:
             treeseq, specs, breaks, rng, snakemake.log.log1
         )
 
-
         # log
         if not my_id % 100:
             with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
@@ -317,7 +314,6 @@ if "LD" in listed_sumstats:
                     f"calculating LD: {my_id} of {tsl.size}",
                     file=logfile,
                 )
-
 
     # get average of ld over the different loci
     dataframe_sumstats_ld = dataframe_sumstats_ld.mean(axis=1)
@@ -383,14 +379,15 @@ dataframe_sumstats = np.concatenate(
 )
 
 
-
 for df in (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win):
     print(df.shape)
 
 print(dataframe_sumstats.shape)
 
-sys.exit("#"*600, " inside calculate_athal_observations, if dimensions are correct remove this stop and continue with the pipeline")
-
+sys.exit(
+    "#" * 600,
+    " inside calculate_athal_observations, if dimensions are correct remove this stop and continue with the pipeline",
+)
 
 
 # log

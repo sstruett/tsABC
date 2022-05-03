@@ -1169,12 +1169,10 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
                     file=logfile,
                 )
 
-
     # log
     if log and (not (sample_id % 50) or sample_id == len(sample_set_list)):
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print("finished treesequence subsampling", file=logfile)
 
-    
     return np.array(treeseq_list).T
