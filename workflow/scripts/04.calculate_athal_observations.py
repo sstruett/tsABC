@@ -235,7 +235,7 @@ if "SFS" in listed_sumstats:
     breaks = breaks_sfs
 
     dataframe_sumstats_sfs = np.empty(tsl.shape, dtype=tskit.TreeSequence)
-    for treeid, treeseq in np.ndenumerate(tsl):
+    for my_id, (treeid, treeseq) in enumerate(np.ndenumerate(tsl), start=1):
         dataframe_sumstats_sfs[treeid] = treeseq.allele_frequency_spectrum(
             sample_sets=None,
             windows=None,
@@ -243,6 +243,16 @@ if "SFS" in listed_sumstats:
             span_normalise=False,
             polarised=snakemake.config["ABC"]["sumstats_specs"]["SFS"]["polarised"],
         )
+
+        # log
+        if not my_id % 100:
+            with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculating SFS: {my_id} of {tsl.size}",
+                    file=logfile,
+                )
+
 
     # check if the sfs shall be discretized as well; this usually is not
     # necessary as the sfs is a discrete statistic already
@@ -267,18 +277,9 @@ if "SFS" in listed_sumstats:
         # reassign to the dataframe sumstat
         dataframe_sumstats_sfs = np.array(new_sfs_dataframe)
 
-    print(dataframe_sumstats_sfs.shape)
 
     # get average of sfs over the different loci
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
-
-
-    print(dataframe_sumstats_sfs.shape)
-
-    sys.exit(
-        "#" * 600
-        + " please check here if the calculation of the mean is done correctly on the correct axis"
-    )
 
     dataframe_sumstats_sfs = np.concatenate(dataframe_sumstats_sfs, axis=0).reshape(
         (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
@@ -302,10 +303,21 @@ if "LD" in listed_sumstats:
     breaks = breaks_ld
 
     dataframe_sumstats_ld = np.empty(tsl.shape, dtype=tskit.TreeSequence)
-    for treeid, treeseq in np.ndenumerate(tsl):
+    for my_id, (treeid, treeseq) in enumerate(np.ndenumerate(tsl), start=1):
         dataframe_sumstats_ld[treeid] = pyfuncs.calculate_ld(
             treeseq, specs, breaks, rng, snakemake.log.log1
         )
+
+
+        # log
+        if not my_id % 100:
+            with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculating LD: {my_id} of {tsl.size}",
+                    file=logfile,
+                )
+
 
     # get average of ld over the different loci
     dataframe_sumstats_ld = dataframe_sumstats_ld.mean(axis=1)
@@ -332,10 +344,19 @@ if "TM_WIN" in listed_sumstats:
     breaks = breaks_tm_win
 
     dataframe_sumstats_tm_win = np.empty(tsl.shape, dtype=tskit.TreeSequence)
-    for treeid, treeseq in np.ndenumerate(tsl):
+    for my_id, (treeid, treeseq) in enumerate(np.ndenumerate(tsl), start=1):
         dataframe_sumstats_tm_win[treeid] = pyfuncs.calculate_tm_win(
             treeseq, specs, breaks_tm_win
         )
+
+        # log
+        if not my_id % 100:
+            with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculating TM_WIN: {my_id} of {tsl.size}",
+                    file=logfile,
+                )
 
     # get average of tm_win over the different loci
     dataframe_sumstats_tm_win = dataframe_sumstats_tm_win.mean(axis=1)
@@ -360,6 +381,16 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 dataframe_sumstats = np.concatenate(
     (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win), axis=1
 )
+
+
+
+for df in (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win):
+    print(df.shape)
+
+print(dataframe_sumstats.shape)
+
+sys.exit("#"*600, " inside calculate_athal_observations, if dimensions are correct remove this stop and continue with the pipeline")
+
 
 
 # log
