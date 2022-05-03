@@ -767,12 +767,13 @@ def calculate_ld(treeseq, specs, breaks, rng, log):
             ERRORS = True
 
     # log
-    with open(log, "a", encoding="utf-8") as logfile:
-        print(datetime.datetime.now(), end="\t", file=logfile)
-        print(
-            "error with discrete genome calculating LD statistics: " + str(ERRORS),
-            file=logfile,
-        )
+    if ERRORS:
+        with open(log, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                "error with discrete genome calculating LD statistics",
+                file=logfile,
+            )
 
     # discretize the r2 values by physical distance
     r2_classes = np.digitize(r2_phys, bins=breaks)
