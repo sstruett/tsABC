@@ -1177,4 +1177,4 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
             print("finished treesequence subsampling", file=logfile)
 
     
-    return np.array(treeseq_list)
+    return np.array(treeseq_list).T
