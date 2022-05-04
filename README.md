@@ -10,10 +10,8 @@
 ## still to implement
  + parameter estimate
  + parameter estimate for masked sumstats (should work using the same script)
- + rewrite the transformation part to use a single rule for the transformation
  + write the two functions to run the 6 parameter model for A. thaliana
  + Obtain stats from A. thaliana
- + Mask stats from A. thaliana
  + for module 02 change script names to include module number
  + add parameter check for the athaliana priors
  + complete localrules in module04, maybe check also for the other modules
@@ -22,6 +20,7 @@
  + make plotting in target_files() function become true
  + summarize the model choice with the classification; produce a table also: pods(rows) --> percentage of each support class
  + configuration sanity; check that number of athal regions and loci are the same
+ + create a summarizing rule for athal, that works on the whole genome, e.g. only non-pericentromeric, e.g. compare pericentromeric with non-pericentromeric
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
