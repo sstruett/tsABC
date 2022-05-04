@@ -126,7 +126,7 @@ if "SFS" in listed_sumstats:
         (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
     )
 else:
-    dataframe_sumstats_sfs = np.empty(shape=0)
+    dataframe_sumstats_sfs = np.empty(shape=(0, 0))
 
 
 # log
@@ -156,7 +156,7 @@ if "LD" in listed_sumstats:
         (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
     )
 else:
-    dataframe_sumstats_ld = np.empty(shape=0)
+    dataframe_sumstats_ld = np.empty(shape=(0, 0))
 
 
 # log
@@ -185,7 +185,7 @@ if "TM_WIN" in listed_sumstats:
         dataframe_sumstats_tm_win, axis=0
     ).reshape((len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0]))
 else:
-    dataframe_sumstats_tm_win = np.empty(shape=0)
+    dataframe_sumstats_tm_win = np.empty(shape=(0, 0))
 
 
 # log
@@ -200,7 +200,16 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 # fuse the summarizing stats list into a 2d-np.array, each row containing the
 # summarizing stats of a single simulated tree sequence
 dataframe_sumstats = np.concatenate(
-    (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win), axis=1
+    [
+        npy
+        for npy in (
+            dataframe_sumstats_sfs,
+            dataframe_sumstats_ld,
+            dataframe_sumstats_tm_win,
+        )
+        if npy.size != 0
+    ],
+    axis=1,
 )
 
 

@@ -723,11 +723,17 @@ def find_breakpoints_for_TM_WIN(tsl, specs, rng, log):
     return np.array(breaks)
 
 
-def calculate_ld(treeseq, specs, breaks, rng, log):
+def calculate_ld_by_matrix(treeseq, npos, breaks, rng, log=False):
     """Calculate the ld on the treeseq
 
     This function aims to calculate a discretized LD pattern based on r2 for
-    a set
+    a set randomly chosen sites. This is very slow. However, if the treesequence
+    provides the requesites to calculate the LD matrix, this is tried for at
+    least the npos_threshold number of SNPs (default=1000). That is, if
+    specs["npos"] is below, we try first to use the matrix approach with a
+    subset of npos_threshold sites. If that fails, we use the snp times snp
+    approach for the specified number of snps. If specs["npos"] is larger than
+    the threshold, specs["npos"] will be used.
 
     Args:
         treeseq: treesequences
@@ -738,55 +744,101 @@ def calculate_ld(treeseq, specs, breaks, rng, log):
         breaks: breakpoints for discretization on the physical distance
         rng: random number generator to calculate which sites to use (see specs)
         log: str, logfile to print errors when calculating ld
+        npos_threshold: int, number of sites to be used for the matrix LD calc
+            (see tskit) approach (default=1000).
+
+    Returns:
+        np.array of floats being the discretized values for LD
+    """
+
+    sys.exit("#" * 600)
+
+
+def calculate_ld(treeseq, specs, breaks, rng, log, npos_threshold=1000):
+    """Calculate the ld on the treeseq
+
+    This function aims to calculate a discretized LD pattern based on r2 for
+    a set randomly chosen sites. This is very slow. However, if the treesequence
+    provides the requesites to calculate the LD matrix, this is tried for at
+    least the npos_threshold number of SNPs (default=1000). That is, if
+    specs["npos"] is below, we try first to use the matrix approach with a
+    subset of npos_threshold sites. If that fails, we use the snp times snp
+    approach for the specified number of snps. If specs["npos"] is larger than
+    the threshold, specs["npos"] will be used.
+
+    Args:
+        treeseq: treesequences
+        specs: dict, specification how to calculate discretized LD; expected to
+            be a dictionary with at least following entries: npos (number of
+            SNPs to use in the calculation of an LD matrix)
+            NOTE: breaks are not used
+        breaks: breakpoints for discretization on the physical distance
+        rng: random number generator to calculate which sites to use (see specs)
+        log: str, logfile to print errors when calculating ld
+        npos_threshold: int, number of sites to be used for the matrix LD calc
+            (see tskit) approach (default=1000).
 
     Returns:
         np.array of floats being the discretized values for LD
     """
     npos = int(float(specs["npos"]))
 
-    # define site ids to calculate the ld on
-    all_site_ids = list(site.id for site in treeseq.sites())
-    if treeseq.num_sites > npos:
-        siteids = rng.choice(all_site_ids, size=npos, replace=False, shuffle=False)
+    # calculate with the matrix approach, will return False if not successful
+    ld_matrix = calculate_ld_by_matrix(
+        treeseq, max(npos, npos_threshold), breaks, rng, log
+    )
+
+    # check if matrix approach was successful, otherwise use the classical
+    # but slow site x site approach
+    if ld_matrix:
+        final_r2_vector = ld_matrix
+
     else:
-        siteids = all_site_ids
-
-    # loop through all chose sites and calculate the ld_array on them
-    ld_calculator = tskit.LdCalculator(treeseq)
-    r2_values = []
-    r2_phys = []
-    ERRORS = False
-    for site1, site2 in itertools.combinations(siteids, 2):
-        try:
-            r2_value = ld_calculator.r2(site1, site2)
-            r2_values.append(r2_value)
-            r2_phys.append(
-                abs(treeseq.site(site1).position - treeseq.site(site2).position)
-            )
-        except:
-            ERRORS = True
-
-    # log
-    if ERRORS:
-        with open(log, "a", encoding="utf-8") as logfile:
-            print(datetime.datetime.now(), end="\t", file=logfile)
-            print(
-                "error with discrete genome calculating LD statistics",
-                file=logfile,
-            )
-
-    # discretize the r2 values by physical distance
-    r2_classes = np.digitize(r2_phys, bins=breaks)
-    r2_values = np.array(r2_values)
-
-    final_r2_vector = []
-    for classid in range(1, len(breaks) + 1):  # because np.digitize results are 1-based
-        if classid in r2_classes:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                final_r2_vector.append(np.nanmean(r2_values[r2_classes == classid]))
+        # define site ids to calculate the ld on
+        all_site_ids = list(site.id for site in treeseq.sites())
+        if treeseq.num_sites > npos:
+            siteids = rng.choice(all_site_ids, size=npos, replace=False, shuffle=False)
         else:
-            final_r2_vector.append(0)
+            siteids = all_site_ids
+
+        # loop through all chose sites and calculate the ld_array on them
+        ld_calculator = tskit.LdCalculator(treeseq)
+        r2_values = []
+        r2_phys = []
+        ERRORS = False
+        for site1, site2 in itertools.combinations(siteids, 2):
+            try:
+                r2_value = ld_calculator.r2(site1, site2)
+                r2_values.append(r2_value)
+                r2_phys.append(
+                    abs(treeseq.site(site1).position - treeseq.site(site2).position)
+                )
+            except:
+                ERRORS = True
+
+        # log
+        if ERRORS:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    "error with discrete genome calculating LD statistics",
+                    file=logfile,
+                )
+
+        # discretize the r2 values by physical distance
+        r2_classes = np.digitize(r2_phys, bins=breaks)
+        r2_values = np.array(r2_values)
+
+        final_r2_vector = []
+        for classid in range(
+            1, len(breaks) + 1
+        ):  # because np.digitize results are 1-based
+            if classid in r2_classes:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    final_r2_vector.append(np.nanmean(r2_values[r2_classes == classid]))
+            else:
+                final_r2_vector.append(0)
 
     return np.array(final_r2_vector)
 

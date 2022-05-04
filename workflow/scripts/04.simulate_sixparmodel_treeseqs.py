@@ -84,5 +84,4 @@ np.save(snakemake.output.params, np.array(parameters_list))
 
 
 # debug
-sys.exit("#"*600 + " what is happening here? simulate six par model")
-
+sys.exit("#" * 600 + " what is happening here? simulate six par model")

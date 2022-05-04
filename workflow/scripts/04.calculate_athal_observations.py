@@ -17,6 +17,7 @@ import itertools
 import pickle
 import math
 import numpy as np
+import pandas as pd
 import tskit
 import json
 import pyfuncs  # from file
@@ -283,7 +284,7 @@ if "SFS" in listed_sumstats:
         (len(dataframe_sumstats_sfs), dataframe_sumstats_sfs[0].shape[0])
     )
 else:
-    dataframe_sumstats_sfs = np.empty(shape=0)
+    dataframe_sumstats_sfs = np.empty(shape=(0, 0))
 
 
 # log
@@ -322,7 +323,7 @@ if "LD" in listed_sumstats:
         (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
     )
 else:
-    dataframe_sumstats_ld = np.empty(shape=0)
+    dataframe_sumstats_ld = np.empty(shape=(0, 0))
 
 
 # log
@@ -360,7 +361,7 @@ if "TM_WIN" in listed_sumstats:
         dataframe_sumstats_tm_win, axis=0
     ).reshape((len(dataframe_sumstats_tm_win), dataframe_sumstats_tm_win[0].shape[0]))
 else:
-    dataframe_sumstats_tm_win = np.empty(shape=0)
+    dataframe_sumstats_tm_win = np.empty(shape=(0, 0))
 
 
 # log
@@ -375,18 +376,16 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 # fuse the summarizing stats list into a 2d-np.array, each row containing the
 # summarizing stats of a single simulated tree sequence
 dataframe_sumstats = np.concatenate(
-    (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win), axis=1
-)
-
-
-for df in (dataframe_sumstats_sfs, dataframe_sumstats_ld, dataframe_sumstats_tm_win):
-    print(df.shape)
-
-print(dataframe_sumstats.shape)
-
-sys.exit(
-    "#" * 600,
-    " inside calculate_athal_observations, if dimensions are correct remove this stop and continue with the pipeline",
+    [
+        npy
+        for npy in (
+            dataframe_sumstats_sfs,
+            dataframe_sumstats_ld,
+            dataframe_sumstats_tm_win,
+        )
+        if npy.size != 0
+    ],
+    axis=1,
 )
 
 
@@ -394,16 +393,6 @@ sys.exit(
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
     print("calculated summarizing statisitcs", file=logfile)
-
-
-# save treeseq list
-np.save(snakemake.output.npy, dataframe_sumstats)
-
-
-# log
-with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
-    print(datetime.datetime.now(), end="\t", file=logfile)
-    print(f"saved sumstats to {snakemake.output.npy}", file=logfile)
 
 
 # save the names of the sumstats
@@ -422,9 +411,11 @@ sumstat_type_id = [
 sumstat_names = np.array(list(map("_".join, zip(sumstat_type, sumstat_type_id))))
 
 
-assert (
-    len(sumstat_names) == dataframe_sumstats.shape[1]
-), "name vector for summary statistics has the wrong dimension"
+pd.DataFrame(dataframe_sumstats, columns=sumstat_names).to_feather(
+    snakemake.output.sumstats, compression="lz4"
+)
 
-
-np.save(snakemake.output.sumstat_count, sumstat_names)
+# log
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(f"saved sumstats to {snakemake.output.sumstats}", file=logfile)
