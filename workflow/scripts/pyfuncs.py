@@ -750,8 +750,97 @@ def calculate_ld_by_matrix(treeseq, npos, breaks, rng, log=False):
     Returns:
         np.array of floats being the discretized values for LD
     """
+    try:
+        # define site ids to calculate the ld on
+        all_site_ids = list(site.id for site in treeseq.sites())
+        if treeseq.num_sites > npos:
+            siteids = rng.choice(all_site_ids, size=npos, replace=False, shuffle=False)
+        else:
+            siteids = all_site_ids
 
-    sys.exit("#" * 600)
+        # delete all sites that are not chosen
+        site_ids_to_delete = [
+            site_id for site_id in all_site_ids if not site_id in siteids
+        ]
+
+        treeseq = treeseq.delete_sites(site_ids_to_delete, record_provenance=True)
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"deleted sites to calculate ld with matrix approach",
+                    file=logfile,
+                )
+
+        # loop through all chose sites and calculate the ld_array on them
+        ld_calculator = tskit.LdCalculator(treeseq)
+
+        ld_matrix = ld_calculator.r2_matrix()
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculated r2-matrix",
+                    file=logfile,
+                )
+
+        sitepos = np.array([site.position for site in treeseq.sites()])
+        ld_dist = np.array([abs(site - sitepos) for site in sitepos])
+
+        r2_values = []
+        r2_phys = []
+
+        for r2_index, _ in np.ndenumerate(ld_matrix):
+            if np.diff(r2_index) >= 0:
+                r2_values.append(ld_matrix[r2_index])
+                r2_phys.append(ld_dist[r2_index])
+
+        r2_values = np.array(r2_values)
+        r2_phys = np.array(r2_phys)
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"calculated r2-distance-matrix",
+                    file=logfile,
+                )
+
+        # discretize the r2 values by physical distance
+        r2_classes = np.digitize(r2_phys, bins=breaks)
+        r2_values = np.array(r2_values)
+
+        final_r2_vector = []
+        for classid in range(
+            1, len(breaks) + 1
+        ):  # because np.digitize results are 1-based
+            if classid in r2_classes:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    final_r2_vector.append(np.nanmean(r2_values[r2_classes == classid]))
+            else:
+                final_r2_vector.append(0)
+
+        # log
+        if log:
+            with open(log, "a", encoding="utf-8") as logfile:
+                print(datetime.datetime.now(), end="\t", file=logfile)
+                print(
+                    f"discretized r2 values, returning final LD statistics",
+                    file=logfile,
+                )
+
+        result = np.array(final_r2_vector)
+
+    except:
+        result = False
+
+    return result
 
 
 def calculate_ld(treeseq, specs, breaks, rng, log, npos_threshold=1000):
@@ -784,14 +873,14 @@ def calculate_ld(treeseq, specs, breaks, rng, log, npos_threshold=1000):
     npos = int(float(specs["npos"]))
 
     # calculate with the matrix approach, will return False if not successful
-    ld_matrix = calculate_ld_by_matrix(
-        treeseq, max(npos, npos_threshold), breaks, rng, log
+    ld_matrix_approach = calculate_ld_by_matrix(
+        treeseq, max(npos, npos_threshold), breaks, rng, log=False
     )
 
     # check if matrix approach was successful, otherwise use the classical
     # but slow site x site approach
-    if ld_matrix:
-        final_r2_vector = ld_matrix
+    if type(ld_matrix_approach) == bool and not ld_matrix_approach:
+        final_r2_vector = ld_matrix_approach
 
     else:
         # define site ids to calculate the ld on

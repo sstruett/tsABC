@@ -21,6 +21,7 @@
  + summarize the model choice with the classification; produce a table also: pods(rows) --> percentage of each support class
  + configuration sanity; check that number of athal regions and loci are the same
  + create a summarizing rule for athal, that works on the whole genome, e.g. only non-pericentromeric, e.g. compare pericentromeric with non-pericentromeric
+ + check config also breaks_mode for tm_win: should allow for three modes: ["pod", "athal", "expected"]
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them

@@ -66,6 +66,15 @@ ABC:
     TM_WIN:
       winsize: 1e4  # window size of the sliding non-overlapping window
       classes: 20  # number of discretized bins
+      # how to calculate the discretization for tm_win, breaks mode can take one
+      # of three values: "pod", "athal", "expected"; "pod" means to calculate
+      # the breakpoints on the statistics of the first pod; "athal" means to
+      # calculate the breakpoints on the statistics of the first provided athal
+      # population defined in this 
+      # config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"]
+      # calculate boundaries based on the first pods theoretical expectation
+      # similar to how it is done in the MSMC paper
+      breaks_mode: athal
 
   model:
     # quatrupels: min, max, numeric type (float, int), distribution type
@@ -141,7 +150,7 @@ ABC:
 
     observations:
       # maximum number of observations from the population
-      num_observations: 1000
+      num_observations: 30
       # initial seed to generate the random seed numbers for the simulations
       seed: 97636  # Do not change this
       treeseq_1001:
