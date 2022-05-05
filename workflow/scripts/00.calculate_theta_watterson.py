@@ -11,6 +11,7 @@ import numpy as np
 import msprime
 import tskit
 import json
+import pickle
 import pyfuncs  # from file
 
 
@@ -88,15 +89,89 @@ if snakemake.wildcards.mode == "region":
     )
 
 elif snakemake.wildcards.mode == "genome":
+    # read tree sequence
+    treeseq_athal = tskit.load(snakemake.input.treeseq_athal)
 
-    sys.exit("implement mode 'genome'")
+    # read sample names of first population
+    sample_names = np.loadtxt(snakemake.input.samples, dtype=str)
+
+    # find the node ids for the sample of the population
+    population_sample = []
+    for individual in treeseq_athal.individuals():
+        if str(json.loads(individual.metadata)["id"]) in sample_names:
+            population_sample.extend(individual.nodes)
+
+    # sample treeseq to provided samples
+    treeseq_athal_population = treeseq_athal.simplify(samples=population_sample)
+    del treeseq_athal
+
+    # get the chromosomal regions from the config file
+    chromosome_regions = []
+    for chromid, start, stop in snakemake.config["ABC"]["athaliana"]["observations"][
+        "treeseq_1001"
+    ]["whole_gemome_approach"]:
+        start += snakemake.params.chrom_multiplier * chromid
+        stop += snakemake.params.chrom_multiplier * chromid
+        chromosome_regions.append((start, stop))
+
+    # log
+    with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print("prepared regions", file=logfile)
+
+    # chop down to regions
+    treeseq_list = []
+    for start, stop in chromosome_regions:
+        # calculate chromid from position in original treeseq
+        chromid = int(start / snakemake.params.chrom_multiplier)
+
+        # add tuple with chromosome/treeseq, as chromid is needed for masking
+        treeseq_list.append(
+            (chromid, treeseq_athal_population.keep_intervals([(start, stop)]).trim())
+        )
+
+        # log
+        with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+            print(datetime.datetime.now(), end="\t", file=logfile)
+            print(
+                f"prepared regions for chromsome {chromid + 1} of {len(chromosome_regions)}",
+                file=logfile,
+            )
+
+    del treeseq_athal_population
+
+    # log
+    with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+        print(datetime.datetime.now(), end="\t", file=logfile)
+        print(
+            "created region treeseq list (1 per region of each chromosome)",
+            file=logfile,
+        )
+
+    # create subsample from treesequence
+    specs = {
+        "num_observations": int(
+            float(
+                snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"][
+                    "whole_genome_approach_num_observations"
+                ]
+            )
+        ),
+        "nsam": int(float(snakemake.config["ABC"]["simulations"]["nsam"])),
+    }
+
+    # remove chromosome from treeseq_list
+    treeseq_list = [treeseq for _, treeseq in treeseq_list]
+
+    tsl = pyfuncs.create_subsets_from_treeseqlist(
+        treeseq_list, specs, rng, snakemake.log.log1
+    )
+
 elif snakemake.wildcards.mode == "pod":
+    # Loading list of tree sequences
+    with open(snakemake.input.tsl_pod[0], "rb") as tsl_file:
+        tsl = np.array(pickle.load(tsl_file), dtype=object)
 
-
-
-
-
-    sys.exit("implement mode 'pod'")
 else:
     assert False, "unknown mode to calclate theta Watterson"
 
@@ -117,10 +192,10 @@ two_N_zero = round(
 )
 
 
-print("\n" + "_"*80, file=sys.stderr)
+print("\n" + "_" * 80, file=sys.stderr)
 print(f"theta_watterson\t{theta_watterson}", file=sys.stderr)
 print(f"two_N_zero\t{two_N_zero}", file=sys.stderr)
-print("="*80 + "\n", file=sys.stderr)
+print("=" * 80 + "\n", file=sys.stderr)
 
 # print to output file
 with open(snakemake.output.txt, "w", encoding="utf-8") as outfile:

@@ -351,6 +351,7 @@ rule calculate_theta_watterson:
     output:
         txt = "theta_watterson_{mode}"
     input:
+        tsl_pod = expand("results/abc/pods/trees/pod_{podid}.tsl", podid=0),
         treeseq_athal = config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
         samples = config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][config["ABC"]["sumstats_specs"]["TM_WIN"]["which_pop_if_athal"]]["path"]
     log:
