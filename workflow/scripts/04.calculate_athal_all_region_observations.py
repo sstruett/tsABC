@@ -179,14 +179,14 @@ if do_mask:
     treeseq_list = treeseq_list_masked
     del treeseq_list_masked
 else:
+    # remove chromid from treeseq_list
+    treeseq_list = [treeseq for _, treeseq in treeseq_list]
+
+
     # log, create log file
     with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("will not mask for exons", file=logfile)
-
-
-# reduce treeseq list to be only treeseqs without chromid
-treeseq_list = [treeseq for _, treeseq in treeseq_list]
 
 
 # create subsample from treesequence
