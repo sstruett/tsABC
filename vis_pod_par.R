@@ -18,10 +18,10 @@ setwd(
 )
 
 
-df.nomask <- read_feather("results/athal/observed/population_Relicts.masked.feather")
+df.nomask <- read_feather("results/athal/observed/population_IBnr.unmasked.feather")
 # df.nomask <- read_feather("results/abc/pods/podstats.masked.feather")
 
-
+df_all <- df.nomask
 df <- df.nomask[,which(apply(df.nomask, 2, var) != 0)]
 df$index <- 1:nrow(df)
 
@@ -53,8 +53,8 @@ tm_win_long %>%
   geom_jitter(width = 0.2)
 
 
-tm_win <- df %>% select(starts_with("tm_win"))
+tm_win <- df_all %>% select(starts_with("tm_win"))
 matrix(apply(tm_win, 2, mean), nrow = sqrt(ncol(tm_win))) %>%
-  image(zlim=c(0.0, 0.2))
+  image()
 
 

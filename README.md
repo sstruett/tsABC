@@ -6,6 +6,7 @@
 ## IMPORTANT
  + Why is there no LD stats in statcomp 0, maybe use more SNPs to calculate all classes, but make sure that NaN is not a problem
  + confirm the downsampling for model choice works correctly
+ + describe that `$ snakemake -j 1 theta_watterson_genome` will calculate theta watterson on the whole region while `$ snakemake -j 1 theta_watterson_region` does it only on the provided regions of athal, while `snakemake -j 1 theta_watterson_pod` will uses 1000 simulated loci for the values of the first pod
 
 ## still to implement
  + parameter estimate
@@ -22,6 +23,7 @@
  + configuration sanity; check that number of athal regions and loci are the same
  + create a summarizing rule for athal, that works on the whole genome, e.g. only non-pericentromeric, e.g. compare pericentromeric with non-pericentromeric
  + check config also breaks_mode for tm_win: should allow for three modes: ["pod", "athal", "expected"]
+ + implement the whole regions into the whole pipeline and target rule
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them

@@ -225,13 +225,61 @@ rule calculate_athal_observations_masked:
         "../scripts/04.calculate_athal_observations.py"
 
 
+rule calculate_athal_all_region_observations:
+    output:
+        sumstats="results/athal/observed/population_{popid}.all_region.feather"
+    input:
+        athal_treeseq=config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
+        sample_list=lambda wildcards: config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][wildcards.popid]["path"],
+        breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
+        # maskfiles must be provided in chromosome sequence
+        maskfiles=expand("resources/mask/locus_{chromid}.txt",
+            chromid=range(5),  # the chromosome ids are 0 based
+            )
+    log:
+        log1="logs/module04/calculate_athal_all_region_observations/population_{popid}.log"
+    conda:
+        "config/env.yaml"
+    threads: 1
+    params:
+        masked=False,
+        chrom_multiplier=float(config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chrom_multiplier"]),
+        seed=int(float(config["ABC"]["athaliana"]["observations"]["seed"])),
+        sumstats=config["ABC"]["sumstats"],
+    script:
+        "../scripts/04.calculate_athal_all_region_observations.py"
+
+
+rule calculate_athal_all_region_observations_masked:
+    output:
+        sumstats="results/athal/observed/population_{popid}.all_region.masked.feather"
+    input:
+        athal_treeseq=config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
+        sample_list=lambda wildcards: config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][wildcards.popid]["path"],
+        breakpoints=rules.generate_discretizing_breakpoints_for_sumstats.output.npytxt,
+        # maskfiles must be provided in chromosome sequence
+        maskfiles=expand("resources/mask/locus_{chromid}.txt",
+            chromid=range(5),  # the chromosome ids are 0 based
+            )
+    log:
+        log1="logs/module04/calculate_athal_all_region_observations_masked/population_{popid}.log"
+    conda:
+        "config/env.yaml"
+    threads: 1
+    params:
+        masked=True,
+        chrom_multiplier=float(config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chrom_multiplier"]),
+        seed=int(float(config["ABC"]["athaliana"]["observations"]["seed"])),
+        sumstats=config["ABC"]["sumstats"],
+    script:
+        "../scripts/04.calculate_athal_all_region_observations.py"
 
 
 rule aggregate_athal_observations:
     output:
         sumstats="results/athal/observed/sumstats.feather",
         # maps the sumstats (row) to all the specifications of the observation
-        identifier="results/athal/observed/dataset.map.pickle",
+        identifier="results/athal/observed/dataset.map.feather",
     input:
         observations=expand(
             "results/athal/observed/population_{popid}.unmasked.feather",
@@ -244,15 +292,15 @@ rule aggregate_athal_observations:
     group:
         "athal_observation"
     threads: 1
-    run:
-        sys.exit("#" * 600 + " inside aggregate_athal_observations")
+    script:
+        "../scripts/04.aggregate_athal_sumstats.py"
 
 
 rule aggregate_athal_observations_masked:
     output:
         sumstats="results/athal/observed/sumstats.masked.feather",
         # maps the sumstats (row) to all the specifications of the observation
-        identifier="results/athal/observed/dataset.masked.map.pickle",
+        identifier="results/athal/observed/dataset.masked.map.feather",
     input:
         observations=expand(
             "results/athal/observed/population_{popid}.masked.feather",
@@ -265,8 +313,50 @@ rule aggregate_athal_observations_masked:
     group:
         "athal_observation"
     threads: 1
-    run:
-        sys.exit("#" * 600 + " inside aggregate_athal_observations")
+    script:
+        "../scripts/04.aggregate_athal_sumstats.py"
+
+
+rule aggregate_athal_all_regions_observations:
+    output:
+        sumstats="results/athal/observed/sumstats.all_regions.feather",
+        # maps the sumstats (row) to all the specifications of the observation
+        identifier="results/athal/observed/dataset.all_regions.map.feather",
+    input:
+        observations=expand(
+            "results/athal/observed/population_{popid}.all_region.feather",
+            popid=wildcards_popid(config),
+        ),
+    log:
+        log1="logs/module04/aggregate_athal_all_regions_observations.log",
+    # conda:
+    #    "config/env.yaml"
+    group:
+        "athal_observation"
+    threads: 1
+    script:
+        "../scripts/04.aggregate_athal_sumstats.py"
+
+
+rule aggregate_athal_all_regions_observations_masked:
+    output:
+        sumstats="results/athal/observed/sumstats.all_regions.masked.feather",
+        # maps the sumstats (row) to all the specifications of the observation
+        identifier="results/athal/observed/dataset.all_regions.masked.map.feather",
+    input:
+        observations=expand(
+            "results/athal/observed/population_{popid}.all_region.masked.feather",
+            popid=wildcards_popid(config),
+        ),
+    log:
+        log1="logs/module04/aggregate_athal_all_regions_observations_masked.log",
+    # conda:
+    #    "config/env.yaml"
+    group:
+        "athal_observation"
+    threads: 1
+    script:
+        "../scripts/04.aggregate_athal_sumstats.py"
 
 
 rule athal_parameter_estimation:
@@ -292,6 +382,7 @@ rule athal_parameter_estimation_masked:
     input:
         sumstats="results/athal/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         observed="results/athal/transformation/statcomp_{statcomposition}..observed_sumstats.masked.txt",
+        identifier=rules.aggregate_athal_observations_masked.output.identifier,
     log:
         log1="logs/module04/athal_parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
@@ -313,6 +404,7 @@ rule aggregate_athal_parameter_estimation:
             tolid=wildcards_tolid(config),
             statcomposition=wildcards_statcomposition(config),
         ),
+        identifier=rules.aggregate_athal_observations.output.identifier,
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation.log",
     # conda:
@@ -332,6 +424,7 @@ rule aggregate_athal_parameter_estimation_masked:
             tolid=wildcards_tolid(config),
             statcomposition=wildcards_statcomposition(config),
         ),
+        identifier=rules.aggregate_athal_observations_masked.output.identifier,
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation_masked.log",
     # conda:

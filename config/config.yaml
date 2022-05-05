@@ -75,6 +75,16 @@ ABC:
       # calculate boundaries based on the first pods theoretical expectation
       # similar to how it is done in the MSMC paper
       breaks_mode: athal
+      # from which population to calc the breakpoints for discretization if
+      # breaks_mode is athal
+      which_pop_if_athal: CEU
+      # when calculating the expected coalescent times for discretization, we
+      # use Schiffels, Durbin 2014 formula, but the times are rescaled in 2N0,
+      # thus we need to translate them into SNPs, for which we need a value;
+      # usually this should be an estimate based on theta Watterson and compare
+      # to a population size that we want to inspect
+      two_N_zero_if_expected: 
+      two_N_zero_if_expected_seed: 6839  # For the simulations; do not change
 
   model:
     # quatrupels: min, max, numeric type (float, int), distribution type
@@ -150,7 +160,7 @@ ABC:
 
     observations:
       # maximum number of observations from the population
-      num_observations: 30
+      num_observations: 35
       # initial seed to generate the random seed numbers for the simulations
       seed: 97636  # Do not change this
       treeseq_1001:
@@ -165,6 +175,19 @@ ABC:
           - [6_000_000,   7_000_000]  # start/end for chromosome 3
           - [13_000_000, 14_000_000]  # start/end for chromosome 4
           - [1_500_000,   2_500_000]  # start/end for chromosome 5
+        # chr/start/end after Charles Underwood (methylation based)
+        whole_gemome_approach:
+          - [1,          0,   11_420_000]  # North 1
+          - [1, 18_270_001,   30_427_671]  # South 1
+          - [2,          0,      910_000]  # North 2
+          - [2,  7_320_001,   19_698_289]  # South 2
+          - [3,          0,   10_390_000]  # North 3
+          - [3, 16_730_001,   23_459_830]  # South 3
+          - [4,          0,    1_070_000]  # North 4
+          - [4,  6_630_001,   18_585_056]  # South 4
+          - [5,          0,    8_890_000]  # North 5
+          - [5, 15_550_001,   26_975_451]  # South 5; end 26_975_502, but no sites
+        whole_genome_approach_num_observations: 12  # LD calculation is very slow
         popid:  # the files contain the sample ids according to the 1001 genomes
           CEU:  # this name will be the population id
             path: "resources/athal/sample_populations/individual.identifier_list_CEU.txt"

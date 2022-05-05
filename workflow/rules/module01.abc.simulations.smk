@@ -138,8 +138,15 @@ rule generate_discretizing_breakpoints_for_sumstats:
             )
         ),
     input:
-        tsl=expand(rules.simulate_treeseq_pods.output.tsl,
-            podid=0)
+        tsl = treeseq_or_list_by_breaks_mode(
+            input_if_pod = expand(rules.simulate_treeseq_pods.output.tsl,
+                podid=0),
+            input_if_athal = [
+                config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
+                config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][config["ABC"]["sumstats_specs"]["TM_WIN"]["which_pop_if_athal"]]["path"]
+            ],
+            breaks_mode = config["ABC"]["sumstats_specs"]["TM_WIN"]["breaks_mode"]
+            )
     log:
         log1="logs/module01/generate_discretizing_breakpoints_for_sumstats.log",
     conda:
@@ -148,7 +155,8 @@ rule generate_discretizing_breakpoints_for_sumstats:
     # resources:
     params:
         sumstats=config["ABC"]["sumstats"],
-        seed=int(float(config["ABC"]["sumstats_specs"]["seed"]))
+        seed=int(float(config["ABC"]["sumstats_specs"]["seed"])),
+        chrom_multiplier=float(config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chrom_multiplier"]),
     script:
         "../scripts/01.generate_discretizing_breakpoints_for_sumstats.py"
 
