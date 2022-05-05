@@ -83,7 +83,7 @@ ABC:
       # thus we need to translate them into SNPs, for which we need a value;
       # usually this should be an estimate based on theta Watterson and compare
       # to a population size that we want to inspect
-      two_N_zero_if_expected: 
+      two_N_zero_if_expected: 230091  # `snakemake -j 1 theta_watterson_region`
       two_N_zero_if_expected_seed: 6839  # For the simulations; do not change
 
   model:

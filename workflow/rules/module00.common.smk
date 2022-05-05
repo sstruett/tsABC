@@ -349,7 +349,7 @@ def treeseq_or_list_by_breaks_mode(input_if_pod, input_if_athal, breaks_mode):
 
 rule calculate_theta_watterson:
     output:
-        "theta_watterson_{mode}"
+        txt = "theta_watterson_{mode}"
     input:
         treeseq_athal = config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["path"],
         samples = config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"][config["ABC"]["sumstats_specs"]["TM_WIN"]["which_pop_if_athal"]]["path"]

@@ -17,7 +17,10 @@ import pyfuncs  # from file
 # log, create log file
 with open(snakemake.log.log1, "w", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
-    print(f"start calculating theta Watterson with mode: {snakemake.wildcards.mode}", file=logfile)
+    print(
+        f"start calculating theta Watterson with mode: {snakemake.wildcards.mode}",
+        file=logfile,
+    )
 
 
 # random seed generator subsetting and simulations
@@ -28,10 +31,8 @@ if snakemake.wildcards.mode == "region":
     # read tree sequence
     treeseq_athal = tskit.load(snakemake.input.treeseq_athal)
 
-
     # read sample names of first population
     sample_names = np.loadtxt(snakemake.input.samples, dtype=str)
-
 
     # find the node ids for the sample of the population
     population_sample = []
@@ -55,10 +56,15 @@ if snakemake.wildcards.mode == "region":
         stop += snakemake.params.chrom_multiplier * chromid
         chromosome_regions.append((start, stop))
 
-        # log, create log file
+        # log
         with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
-            print(f'chropped region {chromid} of {len(snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["chosen_region"])}', file=logfile)
+            print(
+                f"chropped region {chromid} of "
+                + f"""{len(snakemake.config["ABC"]["athaliana"]["observations"][
+                    "treeseq_1001"]["chosen_region"])}""",
+                file=logfile,
+            )
 
     # chop down to regions
     treeseq_list = []
@@ -72,9 +78,7 @@ if snakemake.wildcards.mode == "region":
     specs = {
         "num_observations": int(
             float(
-                snakemake.config["ABC"]["athaliana"]["observations"][
-                    "num_observations"
-                ]
+                snakemake.config["ABC"]["athaliana"]["observations"]["num_observations"]
             )
         ),
         "nsam": int(float(snakemake.config["ABC"]["simulations"]["nsam"])),
@@ -83,20 +87,50 @@ if snakemake.wildcards.mode == "region":
         treeseq_list, specs, rng, snakemake.log.log1
     )
 
-    print(tsl)
-    print(tsl.shape)
-
-    # calculate theta_watterson per treeseq
-    theta_watterson = []
-    for treeseq in tsl:
-        theta_watterson.append(treeseq.segregating_sites()/sum([1/i for i in range(1, treeseq.num_samples)]))
-
-    theta_watterson = np.array(theta_watterson).mean()
 elif snakemake.wildcards.mode == "genome":
+
     sys.exit("implement mode 'genome'")
 elif snakemake.wildcards.mode == "pod":
+
+
+
+
+
     sys.exit("implement mode 'pod'")
 else:
     assert False, "unknown mode to calclate theta Watterson"
 
-print(theta_watterson)
+
+# calculate theta_watterson per treeseq
+theta_watterson = []
+for treeseq in tsl.flatten():
+    theta_watterson.append(
+        treeseq.segregating_sites(span_normalise=True)
+        / sum([1 / i for i in range(1, treeseq.num_samples)])
+    )
+
+theta_watterson = np.array(theta_watterson).mean()
+
+# calculate expected 2N
+two_N_zero = round(
+    theta_watterson / (2 * float(snakemake.config["ABC"]["simulations"]["mutrate"]))
+)
+
+
+print("\n" + "_"*80, file=sys.stderr)
+print(f"theta_watterson\t{theta_watterson}", file=sys.stderr)
+print(f"two_N_zero\t{two_N_zero}", file=sys.stderr)
+print("="*80 + "\n", file=sys.stderr)
+
+# print to output file
+with open(snakemake.output.txt, "w", encoding="utf-8") as outfile:
+    print(f"theta_watterson\t\t{theta_watterson}", file=outfile)
+    print(f"two_N_zero\t\t{two_N_zero}", file=outfile)
+
+
+# log the results
+with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(f"theta_watterson\t{theta_watterson}", file=logfile)
+    print(datetime.datetime.now(), end="\t", file=logfile)
+    print(f"two_N_zero\t{two_N_zero}", file=logfile)
