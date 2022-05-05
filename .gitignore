@@ -7,3 +7,4 @@ logs/
 workflow/scripts/__pycache__/
 resources/
 rdev.RData
+theta_watterson_*
