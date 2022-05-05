@@ -664,7 +664,7 @@ def find_breakpoints_for_TM_WIN(tsl, specs, rng, log):
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print(
-                f"calculating diversity on {tsid}-th treeseq (of {num_trees})",
+                f"calculating diversity on {tsid+1}-th treeseq (of {num_trees})",
                 file=logfile,
             )
 
@@ -1266,7 +1266,7 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
             with open(log, "a", encoding="utf-8") as logfile:
                 print(datetime.datetime.now(), end="\t", file=logfile)
                 print(
-                    f"calculating diversity on {tsid}-th treeseq (of {len(tsl)})",
+                    f"haplodize {tsid+1}-th treeseq (of {len(tsl)})",
                     file=logfile,
                 )
 

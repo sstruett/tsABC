@@ -185,6 +185,10 @@ else:
         print("will not mask for exons", file=logfile)
 
 
+# reduce treeseq list to be only treeseqs without chromid
+treeseq_list = [treeseq for _, treeseq in treeseq_list]
+
+
 # create subsample from treesequence
 rng = np.random.default_rng(snakemake.params.seed)
 specs = {
