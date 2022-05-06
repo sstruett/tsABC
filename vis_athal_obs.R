@@ -118,7 +118,7 @@ p1 <- df %>%
     geom = 'point',
     size = 3,
     shape = 23,
-    position = position_dodge(width = 0.5)
+    position = position_dodge(width = 0.3)
   ) +
   facet_grid(region ~ masked, scales = "free") +
   scale_y_continuous(trans = "log10",
