@@ -125,7 +125,9 @@ p1 <- df %>%
                      breaks = logbreak,
                      labels = loglabel) +
   scale_color_manual(values = wes_palette("Darjeeling1")) +
-  scale_fill_manual(values = wes_palette("Darjeeling1"))
+  scale_fill_manual(values = wes_palette("Darjeeling1"))+
+  labs(x="SFS")
+
 
 p2 <- df %>%
   subset(statname == "ld") %>%
@@ -149,7 +151,9 @@ p2 <- df %>%
   #                    breaks = logbreak,
   #                    labels = loglabel) +
   scale_color_manual(values = wes_palette("Darjeeling1")) +
-  scale_fill_manual(values = wes_palette("Darjeeling1"))
+  scale_fill_manual(values = wes_palette("Darjeeling1"))+
+  labs(x="LD")
+
 
 
 p3 <- df %>%
@@ -175,7 +179,8 @@ p3 <- df %>%
                      breaks = logbreak,
                      labels = loglabel) +
   scale_color_manual(values = wes_palette("Darjeeling1")) +
-  scale_fill_manual(values = wes_palette("Darjeeling1"))
+  scale_fill_manual(values = wes_palette("Darjeeling1"))+
+  labs(x="TM_WIN")
 
 message("prepared plots")
 pdf(paste0(my_path, "vis_athal_obs.pdf"), useDingbats = F)
