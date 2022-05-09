@@ -12,7 +12,6 @@
  + parameter estimate
  + parameter estimate for masked sumstats (should work using the same script)
  + write the two functions to run the 6 parameter model for A. thaliana
- + Obtain stats from A. thaliana
  + for module 02 change script names to include module number
  + add parameter check for the athaliana priors
  + complete localrules in module04, maybe check also for the other modules
@@ -24,14 +23,17 @@
  + create a summarizing rule for athal, that works on the whole genome, e.g. only non-pericentromeric, e.g. compare pericentromeric with non-pericentromeric
  + check config also breaks_mode for tm_win: should allow for three modes: ["pod", "athal", "expected"]
  + implement the whole regions into the whole pipeline and target rule
+ + implement the plot of the sumstats of athal into the pipeline
+ + implement the same way to plot the pars for the pods
+ + make regression type being in the config file not only in the params
+ + make all R scripts print to log file not stdout
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
  + implement to observe the data on a much larger region of thaliana and make the estimate on the unmasked simulations
 
-## Possible improvement
-
- + For the sims I average over loci in the aggregation, but for pods I do in the calculation of podstats script, more consistency needed
+## Suggested development improvement
+ + make a pure piecewise-constant demography estimate; then use the theta over time to simulate the alternative model, while a pure change in rho according to the rescaling through selfing to make an estimate of the change in recombination rate, but use the change in selfing instead
 
 # Updating files
 
