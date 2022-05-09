@@ -4,6 +4,7 @@ library(cowplot)
 theme_set(theme_cowplot())
 library(tidyverse)
 library(wesanderson)
+library(reshape)
 
 # plot stats from observed athal; files are hardcoded
 
@@ -102,8 +103,9 @@ df$region[df$region != "region"] <- "non-peri"
 df$masked <- factor(df$masked, levels = c("nomask", "masked"))
 
 message("prepared data")
+plot_list <- list()
 
-p1 <- df %>%
+plot_list[[1]] <- df %>%
   subset(statname == "sfs") %>%
   subset(value > 0) %>%
   ggplot(aes(statid, value, fill = population)) +
@@ -129,7 +131,7 @@ p1 <- df %>%
   labs(x="SFS")
 
 
-p2 <- df %>%
+plot_list[[2]] <- df %>%
   subset(statname == "ld") %>%
   subset(value > 0) %>%
   ggplot(aes(statid, value, fill = population)) +
@@ -156,7 +158,7 @@ p2 <- df %>%
 
 
 
-p3 <- df %>%
+plot_list[[3]] <- df %>%
   subset(statname == "tm_win") %>%
   subset(value > 0) %>%
   ggplot(aes(statid, value, fill = population)) +
@@ -182,11 +184,59 @@ p3 <- df %>%
   scale_fill_manual(values = wes_palette("Darjeeling1"))+
   labs(x="TM_WIN")
 
+
+
+
+# explore mean stats of tm_win
+mean_df <-
+  df %>%
+  subset(statname == "tm_win") %>%
+  group_by(population, region, masked, statname, statid) %>%
+  summarize(value=mean(value, na.rm=F))
+
+mean_df$index <- interaction(
+  mean_df$population,
+  mean_df$region,
+  mean_df$masked,
+  mean_df$statname
+  )
+
+for (group in unique(mean_df$index)) {
+  this_df <- mean_df %>%
+    subset(index == group)
+  
+  this_m <- matrix(data = this_df$value[this_df$statid + 1], nrow = sqrt(nrow(this_df)))
+  
+  colnames(this_m) <- 1:ncol(this_m)
+  rownames(this_m) <- 1:nrow(this_m)
+  
+  this_df <- melt(this_m)
+  colnames(this_df) <- c("x", "y", "p")
+  
+  plot_list[[length(plot_list) + 1]] <- ggplot(this_df, aes(x = x, y = y, fill = p)) +
+    geom_tile()+
+    scale_fill_gradient(low = "white", high = "hotpink4") +
+    coord_fixed()+
+    labs(
+      title = group,
+      x="n-th segment",
+      y="(n+1)-th segment"
+      ) +
+    theme(
+      aspect.ratio = 1,
+      axis.text = element_blank(),
+      axis.line = element_blank(),
+      axis.ticks = element_blank()
+    )
+}
+
+
+
 message("prepared plots")
 pdf(paste0(my_path, "vis_athal_obs.pdf"), useDingbats = F)
-show(p1)
-show(p2)
-show(p3)
+for (i in 1:length(plot_list)) {
+  show(plot_list[[i]])
+}
 dev.off()
 
 
