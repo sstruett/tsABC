@@ -17,7 +17,7 @@ ABC:
   first_simid: 0
 
   simulations:
-    nsim: 5000  # number of simulations for the ABC
+    nsim: 30000  # number of simulations for the ABC
     # number of sample haplotypes to simulate (and to observe for athaliana)
     nsam: 20
     nloci: 5  # number of independent loci (mimicking chromosomes)
@@ -100,7 +100,7 @@ ABC:
     do_model_choice: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 85426  # Do not change this
-    nsim: 100000  # number of simulations for the alternative model in the ABC
+    nsim: 30000  # number of simulations for the alternative model in the ABC
     # id of the first simulation for this workflow. this is the index that is used
     # to pick the random seed number 
     first_simid: 0
