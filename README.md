@@ -4,13 +4,12 @@
  + provide correct parameters, e. g. mutation rate and recombination rate and nsim, then run everything
 
 ## IMPORTANT
+ + check simulating is working properly, as the estimates do not work at all
  + Why is there no LD stats in statcomp 0, maybe use more SNPs to calculate all classes, but make sure that NaN is not a problem
  + confirm the downsampling for model choice works correctly
  + describe that `$ snakemake -j 1 theta_watterson_genome` will calculate theta watterson on the whole region while `$ snakemake -j 1 theta_watterson_region` does it only on the provided regions of athal, while `snakemake -j 1 theta_watterson_pod` will uses 1000 simulated loci for the values of the first pod
 
 ## still to implement
- + parameter estimate
- + parameter estimate for masked sumstats (should work using the same script)
  + write the two functions to run the 6 parameter model for A. thaliana
  + for module 02 change script names to include module number
  + add parameter check for the athaliana priors
