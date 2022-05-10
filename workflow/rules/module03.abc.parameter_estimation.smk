@@ -57,8 +57,8 @@ rule aggregate_parameter_estimation:
         ),
     log:
         log1="logs/module03/aggregate_parameter_estimation/parameter_estimation.log",
-    run:
-        sys.exit("#" * 600 + "inside aggregate_parameter_estimation\n" + "")
+    script:
+        "../scripts/03.aggregate_parameter_estimation.R"
 
 
 rule aggregate_parameter_estimation_masked:
@@ -73,8 +73,8 @@ rule aggregate_parameter_estimation_masked:
         ),
     log:
         log1="logs/module03/aggregate_parameter_estimation_masked/parameter_estimation_masked.log",
-    run:
-        sys.exit("#" * 600 + "inside aggregate_parameter_estimation_masked\n" + "")
+    script:
+        "../scripts/03.aggregate_parameter_estimation.R"
 
 
 rule plot_pod_sumstats:
