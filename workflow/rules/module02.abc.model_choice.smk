@@ -179,8 +179,10 @@ rule aggregate_model_choice:
         ),
     log:
         log1="logs/module02/aggregate_model_choice/model_choice.log",
-    run:
-        sys.exit("#" * 600 + "inside aggregate_model_choice\n" + "")
+    conda:
+        "config/env.yaml"
+    script:
+        "../scripts/02.aggregate_model_choice.R"
 
 
 rule aggregate_model_choice_masked:
@@ -195,5 +197,7 @@ rule aggregate_model_choice_masked:
         ),
     log:
         log1="logs/module02/aggregate_model_choice_masked/model_choice.log",
-    run:
-        sys.exit("#" * 600 + "inside aggregate_model_choice_masked\n" + "")
+    conda:
+        "config/env.yaml"
+    script:
+        "../scripts/02.aggregate_model_choice.R"

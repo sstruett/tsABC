@@ -57,6 +57,8 @@ rule aggregate_parameter_estimation:
         ),
     log:
         log1="logs/module03/aggregate_parameter_estimation/parameter_estimation.log",
+    conda:
+        "config/env.yaml"
     script:
         "../scripts/03.aggregate_parameter_estimation.R"
 
@@ -73,6 +75,8 @@ rule aggregate_parameter_estimation_masked:
         ),
     log:
         log1="logs/module03/aggregate_parameter_estimation_masked/parameter_estimation_masked.log",
+    conda:
+        "config/env.yaml"
     script:
         "../scripts/03.aggregate_parameter_estimation.R"
 
