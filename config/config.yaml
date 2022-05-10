@@ -19,11 +19,11 @@ ABC:
   simulations:
     nsim: 5000  # number of simulations for the ABC
     # number of sample haplotypes to simulate (and to observe for athaliana)
-    nsam: 12
+    nsam: 20
     nloci: 5  # number of independent loci (mimicking chromosomes)
     locuslen: 1e6  # length of each locus
-    mutrate: 6.95e-9  # mutation rate
-    recrate: 3.6e-8  # recombination rate
+    mutrate: 1e-8  # 6.95e-9  # mutation rate
+    recrate: 1e-8  # 3.6e-8  # recombination rate
     # duration of initial simulation model ("discrete time WF"); see msprime
     # documentation
     dtwf: 1000
@@ -74,7 +74,7 @@ ABC:
       # config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["popid"]
       # calculate boundaries based on the first pods theoretical expectation
       # similar to how it is done in the MSMC paper
-      breaks_mode: athal
+      breaks_mode: expected
       # from which population to calc the breakpoints for discretization if
       # breaks_mode is athal
       which_pop_if_athal: CEU
@@ -83,7 +83,7 @@ ABC:
       # thus we need to translate them into SNPs, for which we need a value;
       # usually this should be an estimate based on theta Watterson and compare
       # to a population size that we want to inspect
-      two_N_zero_if_expected: 312076  # `snakemake -j 1 theta_watterson_region`
+      two_N_zero_if_expected: 40_000  # `snakemake -j 1 theta_watterson_region`
       two_N_zero_if_expected_seed: 6839  # For the simulations; do not change
 
   model:
@@ -91,7 +91,7 @@ ABC:
     # (uniform, loguniform)
     priors:
       - [1e4, 5e5, int, loguniform]  # param 1: pop size
-      - [0.95, 1, float, uniform]  # param 2: present selfing rate
+      - [0.8, 1, float, uniform]  # param 2: present selfing rate
       - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
       - [1e4, 1e6, int, uniform]  # param 4: time of transition
 
@@ -100,7 +100,7 @@ ABC:
     do_model_choice: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 85426  # Do not change this
-    nsim: 4500  # number of simulations for the alternative model in the ABC
+    nsim: 100000  # number of simulations for the alternative model in the ABC
     # id of the first simulation for this workflow. this is the index that is used
     # to pick the random seed number 
     first_simid: 0
@@ -112,7 +112,7 @@ ABC:
     # (uniform, loguniform)
     priors:
       - [1e4, 5e5, int, loguniform]  # param 1: present pop size
-      - [0.95, 1, float, uniform]  # param 2: constant selfing rate
+      - [0.8, 1, float, uniform]  # param 2: constant selfing rate
       - [1e4, 5e5, int, loguniform]  # param 3: ancestral pop size
       - [1e4, 1e6, int, uniform]  # param 4: time of pop size change
 
@@ -136,7 +136,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: True
+    do_thaliana: False
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations
