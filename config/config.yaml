@@ -128,7 +128,7 @@ ABC:
       - [4e4,   4e4,   4e4,   4e4,  4e4]  # param 1 for each pods, respectively
       - [0.99,  0.99,  0.99,  0.99, 0.99]  # param 2 for each pods, respectively
       - [0.1,   0.1,   0.1,   0.1,  0.1]  # param 3 for each pods, respectively
-      - [2e5,   2e4,   4e4,   1e5,  5e5]  # param 4 for each pods, respectively
+      - [2e4,   1e4,   4e4,   1e5,  5e5]  # param 4 for each pods, respectively
     pls: [20]
     pls_max: 55  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
