@@ -880,9 +880,6 @@ def calculate_ld(treeseq, specs, breaks, rng, log, npos_threshold=1000):
     # check if matrix approach was successful, otherwise use the classical
     # but slow site x site approach
     if type(ld_matrix_approach) == bool and not ld_matrix_approach:
-        final_r2_vector = ld_matrix_approach
-
-    else:
         # define site ids to calculate the ld on
         all_site_ids = list(site.id for site in treeseq.sites())
         if treeseq.num_sites > npos:
@@ -928,6 +925,8 @@ def calculate_ld(treeseq, specs, breaks, rng, log, npos_threshold=1000):
                     final_r2_vector.append(np.nanmean(r2_values[r2_classes == classid]))
             else:
                 final_r2_vector.append(0)
+    else:
+        final_r2_vector = ld_matrix_approach
 
     return np.array(final_r2_vector)
 
@@ -1322,24 +1321,26 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
 
 def discretized_times(n=30, M=2):
     """Discretize time segments
-    
+
     Here, we discretize the time segments following the quantiles of the exponential distribution. We determine the expected time to the first coalescence. The times are given in units 2*N_0, where N_0 is recommended to be fixed from Watterson's estimator.
-    
+
     Args:
         n: int, number of segments
         M: int, number of haplotypes
-    
+
     Returns:
         np.array with time segments
     """
-    return np.array([-np.log(1 - (i/n))/(math.comb(M, 2)) for i in range(n)] + [np.Inf])
+    return np.array(
+        [-np.log(1 - (i / n)) / (math.comb(M, 2)) for i in range(n)] + [np.Inf]
+    )
 
 
 def snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size):
     """Translate expected snps by provided times
-    
+
     Calculate the expected number of SNPs per expected coalescent time. If boundaries are too interspersed, then we add the mid breaks between the smallest breaks allowing for entering another break.
-    
+
     Args:
         discretized_times: np.array with discrete times, expect youngest time to be zero and largest to be np.Inf
         two_N_zero: float, the scaling parameter for the time, this value should usually be estimated on basis of a Watterson's estimator
@@ -1347,7 +1348,7 @@ def snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size):
         window_size: int (or float), to scale the window size
     """
     expected_snps = discretized_times * two_N_zero * window_size * mutrate
-    
+
     # scale
     boundaries = [expected_snps[0]]
     for this_time in expected_snps[1:-1]:
@@ -1356,12 +1357,14 @@ def snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size):
         else:
             boundaries.append(this_time)
     boundaries.append(expected_snps[-1])
-    
+
     # delete too intersparsed
     delete_ids = []
-    for bid, (boundary1, boundary2) in enumerate(zip(boundaries[:-1], boundaries[1:-1])):
+    for bid, (boundary1, boundary2) in enumerate(
+        zip(boundaries[:-1], boundaries[1:-1])
+    ):
         if int(boundary1) + 1 == math.ceil(boundary2):
-            delete_ids.append(bid+1)
+            delete_ids.append(bid + 1)
         else:
             continue
 
@@ -1374,7 +1377,7 @@ def snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size):
     boundaries = filtered_boundaries
     del filtered_boundaries
     boundaries.sort()
-    
+
     # add more breaks if length is too small
     boundaries = list(boundaries)
     counter = 0
@@ -1383,7 +1386,10 @@ def snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size):
         for bid, (boundary1, boundary2) in enumerate(zip(boundaries, boundaries[1:])):
             if not np.isinf(boundary2):
                 if math.ceil(boundary1) + 1 < int(boundary2):
-                    boundaries.append(math.ceil(boundary1) + 0.5 * (math.ceil(boundary1) + int(boundary2)))
+                    boundaries.append(
+                        math.ceil(boundary1)
+                        + 0.5 * (math.ceil(boundary1) + int(boundary2))
+                    )
                     boundaries.sort()
                     break
                 else:

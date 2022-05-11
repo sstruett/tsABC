@@ -30,6 +30,7 @@
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
  + implement to observe the data on a much larger region of thaliana and make the estimate on the unmasked simulations
+ + make calculate sumstats using the same script, no matter masked, nomask or proposed vs alternative model
 
 ## Suggested development improvement
  + make a pure piecewise-constant demography estimate; then use the theta over time to simulate the alternative model, while a pure change in rho according to the rescaling through selfing to make an estimate of the change in recombination rate, but use the change in selfing instead

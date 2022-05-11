@@ -176,12 +176,15 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 if "LD" in listed_sumstats:
     specs = snakemake.config["ABC"]["sumstats_specs"]["LD"]
     breaks = breaks_ld
-    dataframe_sumstats_ld = np.array(
-        # the rng is to sample down the number of sites if needed
-        [
-            pyfuncs.calculate_ld(treeseq, specs, breaks, rng, snakemake.log.log1)
-            for treeseq in tsl
-        ]
+
+    dataframe_sumstats_ld = np.empty(np.array(tsl).shape, dtype=tskit.TreeSequence)
+    for treeid, treeseq in np.ndenumerate(tsl):
+        dataframe_sumstats_ld[treeid] = pyfuncs.calculate_ld(
+            treeseq, specs, breaks, rng, snakemake.log.log1
+        )
+
+    dataframe_sumstats_ld = np.concatenate(dataframe_sumstats_ld, axis=0).reshape(
+        (len(dataframe_sumstats_ld), dataframe_sumstats_ld[0].shape[0])
     )
 else:
     dataframe_sumstats_ld = np.empty(shape=(0, 0))
