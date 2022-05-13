@@ -136,11 +136,15 @@ cat("extracted and pasted data\n",
 posteriors <- df %>%
   select(starts_with("acc_"))
 
-df$mean <- apply(posteriors, 1, mean)
-df$mode <- apply(posteriors, 1, function(x) {
-  return(quantile(as.numeric(x), 0.5))
+df$mean <- apply(posteriors, 1, function(x) {
+  return(mean(as.numeric(x), na.rm = TRUE))
 })
-df$median <- apply(posteriors, 1, median)
+df$mode <- apply(posteriors, 1, function(x) {
+  return(quantile(as.numeric(x), 0.5, na.rm = TRUE))
+})
+df$median <- apply(posteriors, 1, function(x) {
+  return(median(as.numeric(x), na.rm = TRUE))
+})
 
 # log
 cat(
