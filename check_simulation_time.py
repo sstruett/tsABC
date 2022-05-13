@@ -72,8 +72,11 @@ my_dirs = [
 ]
 
 
-q = [0.025, 0.25, 0.5, 0.75, 0.975]
+q = [0, 0.025, 0.5, 0.975, 1]
 print(f"quantiles: {q}")
 for this_dir in my_dirs:
-    _ = [print(d, end="\t") for d in get_median_duration_from_logs(this_dir)]
+    _ = [
+        print(d, end="\t")
+        for d in get_median_duration_from_logs(this_dir, q)
+    ]
     print(f"\t{this_dir}")
