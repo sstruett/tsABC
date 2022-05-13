@@ -257,6 +257,8 @@ rule aggregate_sumstats_masked:
         ),
     log:
         log1="logs/module01/aggregate_sumstats_masked.log",
+    conda:
+        "config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -511,8 +513,8 @@ rule aggregate_podstats_masked:
             podid=wildcards_podid(config)),
     log:
         log1="logs/module01/aggregate_podstats_masked.log",
-    #conda:
-    #    "config/env.yaml"
+    conda:
+        "config/env.yaml"
     threads: 1
     # resources:
     params:

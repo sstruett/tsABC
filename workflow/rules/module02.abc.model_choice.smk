@@ -132,7 +132,7 @@ rule transform_sumstats:
 rule model_choice:
     output:
         bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...RDS",
-        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.pdf"
+        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.pdf",
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.txt",
@@ -151,7 +151,7 @@ rule model_choice:
 rule model_choice_masked:
     output:
         bayes_factors="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...masked.RDS",
-        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.pdf"
+        bayes_plot="results/abc/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.pdf",
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.masked.txt",

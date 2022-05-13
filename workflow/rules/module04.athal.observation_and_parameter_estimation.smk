@@ -287,8 +287,8 @@ rule aggregate_athal_observations:
         ),
     log:
         log1="logs/module04/aggregate_athal_observations.log",
-    # conda:
-    #    "config/env.yaml"
+    conda:
+        "config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -308,8 +308,8 @@ rule aggregate_athal_observations_masked:
         ),
     log:
         log1="logs/module04/aggregate_athal_observations_masked.log",
-    # conda:
-    #    "config/env.yaml"
+    conda:
+        "config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -329,8 +329,8 @@ rule aggregate_athal_all_regions_observations:
         ),
     log:
         log1="logs/module04/aggregate_athal_all_regions_observations.log",
-    # conda:
-    #    "config/env.yaml"
+    conda:
+        "config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -350,8 +350,8 @@ rule aggregate_athal_all_regions_observations_masked:
         ),
     log:
         log1="logs/module04/aggregate_athal_all_regions_observations_masked.log",
-    # conda:
-    #    "config/env.yaml"
+    conda:
+        "config/env.yaml"
     group:
         "athal_observation"
     threads: 1
