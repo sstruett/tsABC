@@ -68,7 +68,14 @@ for (parestid in 1:length(parameter.estimations)) {
       post.rej <- parest[[parest.id]]$rej[, param.name]
       post.adj <- parest[[parest.id]]$adj[, param.name]
       
+      if (parest.tolid != length(post.rej)) {
+        post.rej <- c(post.rej, rep(NA, parest.tolid - length(post.rej)))
+      }
       stopifnot(parest.tolid == length(post.rej))
+      
+      if (parest.tolid != length(post.adj)) {
+        post.adj <- c(post.adj, rep(NA, parest.tolid - length(post.adj)))
+      }
       stopifnot(parest.tolid == length(post.adj))
       
       
