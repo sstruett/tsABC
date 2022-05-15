@@ -36,6 +36,12 @@ rule visualize_podstats_masked:
             "results/abc/transformation/statcomp_{statcomposition}..pods_podstats.masked.txt",
             statcomposition=wildcards_statcomposition(config)
             )
+    log:
+        log1="logs/module05/visualize_podstats_masked.log",
+    conda:
+        "config/env.yaml"
+    script:
+        "../scripts/05.visualize_podstats.R"
 
 
 rule visualize_paremter_estimation:
