@@ -43,7 +43,7 @@ def target_files(wildcards, verbose=True):
             target_file_list.append("results/abc/model_choice_masked.RDS")
 
     # parameter estimations
-    if True:
+    if config["ABC"]["do_parameter_estimation"]:
         target_file_list.append("results/abc/parameter_estimation.RDS")
 
         # if there is the masking asked for
@@ -62,16 +62,31 @@ def target_files(wildcards, verbose=True):
                 "results/athal/summarized_athal_parameter_estimations_masked.csv"
             )
 
-    # plotting
-    if False:
+    # visualisation
+    if config["ABC"]["do_visualisation"]:
         target_file_list.extend(
             [
-                "results/plots/abc/pod_param_correlation.pdf",
-                "results/plots/abc/pod_param_correlation.masked.pdf",
-                "results/plots/athal/pod_param_correlation.pdf",
-                "results/plots/athal/pod_param_correlation.masked.pdf",
-                "results/plots/athal/observations.stats.pdf",
-                "results/plots/athal/observations.stats.masked.pdf",
+                # for abc performance
+                "results/plots/abc/parameter_estimation.pdf",
+                "results/plots/abc/model_choice.pdf",
+                "results/plots/abc/parameter.pdf",
+            ]
+        )
+
+        if config["ABC"]["sumstats_specs"]["run_masked"]:
+            target_file_list.extend(
+                [
+                    "results/plots/abc/parameter_estimation.masked.pdf",
+                    "results/plots/abc/model_choice.masked.pdf",
+                    "results/plots/abc/parameter.masked.pdf",
+                ]
+            )
+
+    # visualisation of athal
+    if config["ABC"]["athaliana"]["do_visualisation"]:
+        target_file_list.extend(
+            [
+
             ]
         )
 

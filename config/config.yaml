@@ -4,6 +4,10 @@ ABC:
   # initial seed to generate the random seed numbers for the simulations
   seed: 12345  # Do not change this
   nseed: 1e6  # num of seeds, must be bigger than the number of simulations
+  # whether to ask for the parameter estimation of the pods; leave it True
+  do_parameter_estimation: True
+  # whether to visualize the parameter estimation, model choice etc.
+  do_visualisation: True
   # the number of rows for the generated seeds, will be used for the independent
   # loci; for Arabidopsis thaliana, the first five rows would mark the seeds for
   # the simulation of 5 independent loci mimicking 5 chromosomes.
@@ -137,6 +141,8 @@ ABC:
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
     do_thaliana: False
+    # whehter to visualize the parameter estimation of Arabidopsis thaliana
+    do_visualisation: False
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations

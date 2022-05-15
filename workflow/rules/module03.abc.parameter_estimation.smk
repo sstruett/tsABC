@@ -83,13 +83,3 @@ rule aggregate_parameter_estimation_masked:
         "config/env.yaml"
     script:
         "../scripts/03.aggregate_parameter_estimation.R"
-
-
-rule plot_pod_sumstats:
-    output:
-        pdf="results/abc/pod_param_correlation.pdf",
-    input:
-        transformed=expand(
-            "results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
-            statcomposition=wildcards_statcomposition(config),
-        ),

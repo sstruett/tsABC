@@ -27,7 +27,9 @@
  + make regression type being in the config file not only in the params
  + make all R scripts print to log file not stdout
  + separate module00.common.smk to module00.common.rules.smk and module00.common.func.smk
- + write rule plot_pod_sumstats
+ + finsish visualisation
+ + add athal visualisation
+ + think about how to visua
 
  + if no mask is provided, create a rule that makes a random mask, e.g. remove 30% of data on 50 kb stretches; e.g. put into readme how to generate this random mask; $ snakemake -j 1 results/mask/generate_random_mask.touch
  + update all R scripts in module 02; rfunctions R and the scripts that use them
