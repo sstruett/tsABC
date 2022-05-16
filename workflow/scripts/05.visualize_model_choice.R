@@ -56,15 +56,6 @@ loglabel <- sapply(logbreak, function(x) {
 })
 
 
-#
-# save.image(file = "rdev.Rdata")
-# stop(paste0("created image to start manual development:\n  ", getwd()))
-# setwd(
-#   "~/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC"
-# ); LOG=""
-# load("rdev.Rdata")
-
-
 # log
 LOG <- snakemake@log$log1
 cat("creating new log file\n", file = LOG, append = F)

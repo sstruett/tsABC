@@ -89,8 +89,11 @@ rule visualize_paremter_estimation:
         log1="logs/module05/visualize_paremter_estimation.log",
     conda:
         "config/env.yaml"
+    params:
+        # which average interquantile ranges to calculate
+        iqr = (0.99, 0.95, 0.9, 0.8, 0.5, 0.25, 0.1, 0)
     script:
-        "../scripts/05.visualize_paremter_estimation.R"
+        "../scripts/05.visualize_parameter_estimation.R"
 
 
 rule visualize_parameter_estimation_masked:
@@ -98,6 +101,15 @@ rule visualize_parameter_estimation_masked:
         pdf="results/plots/abc/parameter_estimation.masked.pdf"
     input:
         estimations="results/abc/parameter_estimation_masked.RDS"
+    log:
+        log1="logs/module05/visualize_parameter_estimation_masked.log",
+    conda:
+        "config/env.yaml"
+    params:
+        # which average interquantile ranges to calculate
+        iqr = (0.99, 0.95, 0.9, 0.8, 0.5, 0.25, 0.1, 0)
+    script:
+        "../scripts/05.visualize_parameter_estimation.R"
 
         
 
