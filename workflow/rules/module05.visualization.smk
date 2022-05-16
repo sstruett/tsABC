@@ -44,11 +44,53 @@ rule visualize_podstats_masked:
         "../scripts/05.visualize_podstats.R"
 
 
+
+
+rule visualize_model_choice:
+    output:
+        pdf="results/plots/abc/model_choice.pdf"
+    input:
+        model_choice="results/abc/model_choice.RDS"
+    log:
+        log1="logs/module05/visualize_model_choice.log",
+    conda:
+        "config/env.yaml"
+    params:
+        # param no 4 (zero-based) must be t_sigma
+        tsigma_per_podid = config["ABC"]["performance"]["pods"][3]
+    script:
+        "../scripts/05.visualize_model_choice.R"
+
+
+rule visualize_model_choice_masked:
+    output:
+        pdf="results/plots/abc/model_choice.masked.pdf"
+    input:
+        model_choice="results/abc/model_choice_masked.RDS"
+    log:
+        log1="logs/module05/visualize_model_choice_masked.log",
+    conda:
+        "config/env.yaml"
+    params:
+        # param no 4 (zero-based) must be t_sigma
+        tsigma_per_podid = config["ABC"]["performance"]["pods"][3]
+    script:
+        "../scripts/05.visualize_model_choice.R"
+
+
+
+
 rule visualize_paremter_estimation:
     output:
         pdf="results/plots/abc/parameter_estimation.pdf"
     input:
         estimations="results/abc/parameter_estimation.RDS"
+    log:
+        log1="logs/module05/visualize_paremter_estimation.log",
+    conda:
+        "config/env.yaml"
+    script:
+        "../scripts/05.visualize_paremter_estimation.R"
 
 
 rule visualize_parameter_estimation_masked:
@@ -58,19 +100,6 @@ rule visualize_parameter_estimation_masked:
         estimations="results/abc/parameter_estimation_masked.RDS"
 
         
-
-rule visualize_model_choice:
-    output:
-        pdf="results/plots/abc/model_choice.pdf"
-    input:
-        model_choice="results/abc/model_choice.RDS"
-
-
-rule visualize_model_choice_masked:
-    output:
-        pdf="results/plots/abc/model_choice.masked.pdf"
-    input:
-        model_choice="results/abc/model_choice_masked.RDS"
 
         
 
