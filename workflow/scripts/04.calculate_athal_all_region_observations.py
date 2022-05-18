@@ -83,7 +83,9 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 
 # get the chromosomal regions from the config file
 chromosome_regions = []
-for chromid, start, stop in snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["whole_gemome_approach"]:
+for chromid, start, stop in snakemake.config["ABC"]["athaliana"]["observations"][
+    "treeseq_1001"
+]["whole_gemome_approach"]:
     start += snakemake.params.chrom_multiplier * chromid
     stop += snakemake.params.chrom_multiplier * chromid
     chromosome_regions.append((start, stop))
@@ -102,7 +104,9 @@ for start, stop in chromosome_regions:
     chromid = int(start / snakemake.params.chrom_multiplier)
 
     # add tuple with chromosome/treeseq, as chromid is needed for masking
-    treeseq_list.append((chromid, treeseq_athal_population.keep_intervals([(start, stop)]).trim()))
+    treeseq_list.append(
+        (chromid, treeseq_athal_population.keep_intervals([(start, stop)]).trim())
+    )
 
     # log
     with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
@@ -149,7 +153,6 @@ if do_mask:
     # remove chromid from treeseq_list
     treeseq_list = [treeseq for _, treeseq in treeseq_list]
 
-
     # log
     with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
@@ -182,7 +185,6 @@ else:
     # remove chromid from treeseq_list
     treeseq_list = [treeseq for _, treeseq in treeseq_list]
 
-
     # log, create log file
     with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
@@ -193,7 +195,11 @@ else:
 rng = np.random.default_rng(snakemake.params.seed)
 specs = {
     "num_observations": int(
-        float(snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"]["whole_genome_approach_num_observations"])
+        float(
+            snakemake.config["ABC"]["athaliana"]["observations"]["treeseq_1001"][
+                "whole_genome_approach_num_observations"
+            ]
+        )
     ),
     "nsam": int(float(snakemake.config["ABC"]["simulations"]["nsam"])),
 }

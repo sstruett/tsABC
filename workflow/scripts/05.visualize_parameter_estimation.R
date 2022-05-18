@@ -101,6 +101,12 @@ data <- cbind.data.frame(data.index,
                          data.quantiles) %>% tibble()
 
 
+# find tsigma per podid
+tsigma <- snakemake@params$tsigma_per_podid %>% as.numeric()
+data$tsigma <- sapply(data$podid, function(x)
+  return(tsigma[x]))
+
+
 # create empty plot list
 plot_list <- list()
 plot_index <- 0
@@ -123,15 +129,6 @@ for (a in unique(data$param)) {
             subset(regression == e)
           
           if (nrow(sdf) > 0) {
-            # add tsigma; i. e. the varying parameter trhough the different pods
-            par3 <- data %>%
-              subset(param == "param_3") %>%
-              subset(statcomposition == b) %>%
-              subset(pls == c) %>%
-              subset(tol == d) %>%
-              subset(regression == e)
-            sdf$tsigma <- par3$true_value
-            
             sdf <- sdf %>%
               pivot_longer(
                 -c(
@@ -141,6 +138,7 @@ for (a in unique(data$param)) {
                   pls,
                   tol,
                   regression,
+                  podid,
                   mean,
                   mode,
                   median,
@@ -156,6 +154,7 @@ for (a in unique(data$param)) {
                 pls,
                 tol,
                 regression,
+                podid,
                 quantile,
                 tsigma
               ) %>%
@@ -185,12 +184,6 @@ for (a in unique(data$param)) {
               scale_x_continuous(
                 trans = "log10",
                 limits = mxlim,
-                breaks = logbreak,
-                labels = loglabel
-              ) +
-              scale_y_continuous(
-                trans = "log10",
-                limits = mylim,
                 breaks = logbreak,
                 labels = loglabel
               ) +
@@ -228,11 +221,16 @@ for (a in unique(data$param)) {
                 )
               )
             
+            # make log scale for some parameters
+            if (a %in% c("param_0", "param_3"))
+              plot_list[[plot_index]] <- plot_list[[plot_index]] +
+              scale_y_continuous(
+                trans = "log10",
+                limits = mylim,
+                breaks = logbreak,
+                labels = loglabel
+              )
           }
-          
-          
-          
-          
         }
       }
     }

@@ -8,6 +8,7 @@ library(abc)
   OUTFILE_ESTIMS  <- snakemake@output$estims
   INFILE_ABC  <- snakemake@input$sumstats
   INFILE_POD  <- snakemake@input$podstats
+  INFILE_PODID <- snakemake@input$podid
   NTOLERATED <-
     as.numeric(snakemake@params$ntol)
   STATCOMP_NO <- as.numeric(snakemake@params$statcomposition_no)
@@ -62,6 +63,10 @@ cat("creating new log file\n", file = LOG, append = F)
   df_pod <- data.frame(read.table(INFILE_POD, header = T))
   
   
+  # read pod index
+  podid <- read.csv(INFILE_PODID, header = FALSE)[[1]] + 1  # podid are 0-based
+  
+  
   # subset stats (remove parameters)
   all_sumstats_pods <-
     df_pod[, grep("LinearCombination", names(df_pod))]
@@ -93,7 +98,6 @@ cat("creating new log file\n", file = LOG, append = F)
 {
   # parameter preparation
   my_tolerance <- NTOLERATED / nrow(sumstats_abc)
-  quant_vec_for_ci <- seq(0, 1, 0.005)
 }
 
 
@@ -147,7 +151,9 @@ cat("creating new log file\n", file = LOG, append = F)
     prior_and_posteriors[[i]] <-
       list(rej = rejection_values,
            adj = adjusted_values,
-           true_params = true_params)
+           true_params = true_params,
+           podid = podid[i]
+           )
     
     
     

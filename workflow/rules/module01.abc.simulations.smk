@@ -460,6 +460,7 @@ rule calculate_podstats:
 rule aggregate_podstats:
     output:
         sumstats="results/abc/pods/podstats.feather",
+        podid="results/abc/pods/podstats.podid.csv"
     input:
         npys=expand(rules.calculate_podstats.output.npy,
             podid=wildcards_podid(config)),
@@ -505,6 +506,7 @@ rule calculate_podstats_masked:
 rule aggregate_podstats_masked:
     output:
         sumstats="results/abc/pods/podstats.masked.feather",
+        podid="results/abc/pods/podstats.podid.masked.csv"
     input:
         npys=expand(rules.calculate_podstats_masked.output.npy,
             podid=wildcards_podid(config)),

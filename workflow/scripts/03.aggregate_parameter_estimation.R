@@ -42,7 +42,7 @@ cat("read data\n",
 df_collector <- list()
 for (parestid in 1:length(parameter.estimations)) {
   parest <- parameter.estimations[[parestid]]
-  
+
   # get values that are not posteriors; afterwards we can loop through the
   # posteriors
   parest.filename <- parest$filename
@@ -61,7 +61,7 @@ for (parestid in 1:length(parameter.estimations)) {
   # extract true params
   for (parest.id in 1:length(parest)) {
     true_params <- parest[[parest.id]]$true_params
-    
+    podid <- parest[[parest.id]]$podid
     
     # loop through parameters and extract the posterior for each parameter
     for (param.name in colnames(true_params)) {
@@ -85,7 +85,8 @@ for (parestid in 1:length(parameter.estimations)) {
         statcomposition = parest.statcomposition,
         pls = parest.plsid,
         tol = parest.tolid,
-        regression = c("rej", "adj")
+        regression = c("rej", "adj"),
+        podid = podid
       )
       df_1 <-
         rbind.data.frame(c(post.rej, rep(NA, max_tolid - parest.tolid)),

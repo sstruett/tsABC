@@ -91,7 +91,6 @@ tsigma <- snakemake@params$tsigma_per_podid %>% as.numeric()
 df$tsigma <- sapply(df$podid, function(x)
   return(tsigma[x]))
 
-
 # discretize bf
 df$bf_discrete <- sapply(df$bf, discretize_bayes_factor)
 

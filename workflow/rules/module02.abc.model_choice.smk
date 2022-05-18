@@ -137,6 +137,7 @@ rule model_choice:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
+        podid=rules.aggregate_podstats.output.podid,
     log:
         log1="logs/module02/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
@@ -156,6 +157,7 @@ rule model_choice_masked:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         alternative_sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_alternative.sumstats.masked.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.masked.txt",
+        podid=rules.aggregate_podstats_masked.output.podid,
     log:
         log1="logs/module02/model_choice_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:

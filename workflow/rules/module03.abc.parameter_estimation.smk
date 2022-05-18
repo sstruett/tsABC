@@ -12,6 +12,7 @@ rule parameter_estimation:
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
+        podid=rules.aggregate_podstats.output.podid,
     log:
         log1="logs/module03/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
@@ -35,6 +36,7 @@ rule parameter_estimation_masked:
     input:
         sumstats="results/abc/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         podstats="results/abc/transformation/statcomp_{statcomposition}..pods_podstats.masked.txt",
+        podid=rules.aggregate_podstats_masked.output.podid,
     log:
         log1="logs/module03/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:

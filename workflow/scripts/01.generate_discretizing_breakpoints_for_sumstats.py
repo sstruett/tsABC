@@ -130,11 +130,23 @@ for sumstat in unique_sumstats:
             snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["breaks_mode"]
             == "expected"
         ):
-            discretized_times = discretized_times(n=snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["classes"], M=2)
+            discretized_times = discretized_times(
+                n=snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["classes"], M=2
+            )
             mutrate = float(snakemake.config["ABC"]["simulations"]["mutrate"])
-            two_N_zero =  int(float(snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["two_N_zero_if_expected"]))
-            window_size = int(float(snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["winsize"]))
-            breaks = snp_freq_from_times(discretized_times, two_N_zero, mutrate, window_size)
+            two_N_zero = int(
+                float(
+                    snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"][
+                        "two_N_zero_if_expected"
+                    ]
+                )
+            )
+            window_size = int(
+                float(snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["winsize"])
+            )
+            breaks = snp_freq_from_times(
+                discretized_times, two_N_zero, mutrate, window_size
+            )
         else:
             sys.exit(
                 "#" * 600

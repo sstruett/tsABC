@@ -41,6 +41,10 @@ podindex <- apply(podparam, 1, function(x) {
   return(this_podindex)
 })
 
+# test if it is consistent with provided podid
+podid <- read.table(snakemake@input$podid, header = F)[[1]]
+stopifnot(all(podid+1 == podindex))
+
 # read paremeter for inference
 ntolerated <- as.numeric(snakemake@wildcards$tolid)
 npls <- as.numeric(snakemake@wildcards$plsid)

@@ -149,7 +149,7 @@ plot_list[[plot.id]] <-
     plot.id <- plot.id + 1
     plot_list[[plot.id]] <- df %>%
       select(!starts_with("LinearCombination_"),
-             starts_with(pls_name)) %>%
+             starts_with(all_of(pls_name))) %>%
       rename(LinearCombination = pls_name) %>%
       pivot_longer(cols = colnames(df)[grep("^param_", colnames(df))],
                    names_to = "param",
