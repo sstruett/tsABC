@@ -112,12 +112,7 @@ rule simulate_treeseq_pods:
         loclen=int(float(config["ABC"]["simulations"]["locuslen"])),
         nsam=int(float(config["ABC"]["simulations"]["nsam"])),
         dtwf=int(float(config["ABC"]["simulations"]["dtwf"])),
-        params=(
-            int(float(config["ABC"]["performance"]["pods"][0][0])),
-            float(config["ABC"]["performance"]["pods"][1][0]),
-            float(config["ABC"]["performance"]["pods"][2][0]),
-            int(float(config["ABC"]["performance"]["pods"][3][0])),
-        )
+        params=config["ABC"]["performance"]["pods"]
     script:
         "../scripts/01.simulate_treeseq_pods.py"
 

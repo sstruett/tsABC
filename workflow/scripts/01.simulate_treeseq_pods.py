@@ -33,7 +33,22 @@ def main(simid):
     rng = np.random.default_rng(seed)
 
     # draw the parameters of the model
-    params = snakemake.params["params"]
+    params = (
+        int(
+            float(snakemake.params["params"][0][int(float(snakemake.wildcards.podid))])
+        ),
+        float(snakemake.params["params"][1][int(float(snakemake.wildcards.podid))]),
+        float(snakemake.params["params"][2][int(float(snakemake.wildcards.podid))]),
+        int(
+            float(snakemake.params["params"][3][int(float(snakemake.wildcards.podid))])
+        ),
+    )
+
+    print(params)
+    sys.exit(
+        "#" * 600
+        + " inside 01.simulate_treeseq_pods.py, find the issue with the params"
+    )
 
     # simulate
     ts = pyfuncs.simulate_treesequence_under_model(

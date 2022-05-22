@@ -15,7 +15,7 @@ rule visualize_podstats:
         transformed=expand(
             "results/abc/transformation/statcomp_{statcomposition}..pods_podstats.txt",
             statcomposition=wildcards_statcomposition(config),
-        )
+        ),
     log:
         log1="logs/module05/visualize_podstats.log",
     conda:

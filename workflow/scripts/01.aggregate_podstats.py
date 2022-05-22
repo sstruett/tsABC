@@ -70,10 +70,8 @@ for podid in range(read_data.shape[0]):
         result_table_list[-1][f"param_{parid}"] = param
         parameter_columns_names.append(f"param_{parid}")
 
-
     # save pod index to list
     result_podid_list.extend([podid for _ in range(len(result_table_list[-1].index))])
-
 
     # move podid and parameter columns to front
     result_table_list[-1] = result_table_list[-1][
@@ -96,10 +94,8 @@ with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
 
 
 # save podid according to config file
-np.savetxt(snakemake.output.podid, np.array(result_podid_list).astype(int), fmt='%s')
+np.savetxt(snakemake.output.podid, np.array(result_podid_list).astype(int), fmt="%s")
 
 with open(snakemake.log.log1, "a", encoding="utf-8") as logfile:
     print(datetime.datetime.now(), end="\t", file=logfile)
     print(f"saved podid npy array", file=logfile)
-
-

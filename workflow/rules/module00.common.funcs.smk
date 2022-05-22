@@ -84,11 +84,7 @@ def target_files(wildcards, verbose=True):
 
     # visualisation of athal
     if config["ABC"]["athaliana"]["do_visualisation"]:
-        target_file_list.extend(
-            [
-
-            ]
-        )
+        target_file_list.extend([])
 
     # print the requested files to the standard error stream
     if verbose:
