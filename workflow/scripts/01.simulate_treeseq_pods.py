@@ -44,12 +44,6 @@ def main(simid):
         ),
     )
 
-    print(params)
-    sys.exit(
-        "#" * 600
-        + " inside 01.simulate_treeseq_pods.py, find the issue with the params"
-    )
-
     # simulate
     ts = pyfuncs.simulate_treesequence_under_model(
         params, snakemake.params, rng, snakemake.log.log1
