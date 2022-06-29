@@ -6,6 +6,12 @@ library(tidyverse)
 library(wesanderson)
 
 
+# save.image(file = "rdev.RData")
+# stop("saved rdev.RData")
+# setwd("/Users/struett/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC")
+# load(file="rdev.RData")
+
+
 # set theme
 theme_set(theme_cowplot())
 
@@ -136,7 +142,7 @@ df <- df %>%
 a <- df %>%
   group_by(podid, statcomposition, pls, tolid, regression_method, tsigma) %>%
   summarise(total_proportion = sum(bf_proportion))
-stopifnot(all(a$total_proportion == 1))
+stopifnot(all(1-a$total_proportion < 1e-6))  # sometimes numerical issues occur
 
 
 # remove column

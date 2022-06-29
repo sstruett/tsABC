@@ -94,10 +94,10 @@ ABC:
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e4, 5e5, int, loguniform]  # param 1: pop size
+      - [1e4, 2e5, int, loguniform]  # param 1: pop size
       - [0.8, 1, float, uniform]  # param 2: present selfing rate
       - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
-      - [1e4, 1e6, int, uniform]  # param 4: time of transition
+      - [0.8e3, 5e5, int, loguniform]  # param 4: time of transition
 
   alternative_model:
     # wether to as for the the alternative model to be simulated
@@ -115,10 +115,10 @@ ABC:
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e4, 5e5, int, loguniform]  # param 1: present pop size
+      - [1e4, 2e5, int, loguniform]  # param 1: present pop size
       - [0.8, 1, float, uniform]  # param 2: constant selfing rate
-      - [1e4, 5e5, int, loguniform]  # param 3: ancestral pop size
-      - [1e4, 1e6, int, uniform]  # param 4: time of pop size change
+      - [1e4, 2e5, int, loguniform]  # param 3: ancestral pop size
+      - [0.8e4, 5e5, int, loguniform]  # param 4: time of pop size change
 
   # analysis of performance 
   performance:
@@ -140,9 +140,9 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: False
+    do_thaliana: True
     # whehter to visualize the parameter estimation of Arabidopsis thaliana
-    do_visualisation: False
+    do_visualisation: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 91424  # Do not change this
     nseed: 1e6  # num of seeds, must be bigger than the number of simulations
