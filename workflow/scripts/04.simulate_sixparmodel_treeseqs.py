@@ -44,7 +44,7 @@ def main(simid):
     )  # only the parameter drawing relies on the same seed, the simulations must be independent
 
     # simulate
-    ts = pyfuncs.simulate_treesequence_under_model(
+    ts = pyfuncs.simulate_treesequence_under_six_parameter_model(
         params, snakemake.params, rng, snakemake.log.log1
     )
 

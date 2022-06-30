@@ -9,6 +9,7 @@
  + make sure to simulate from_ts with the correct model
 
 ## still to implement
+ + do_visualisation to be implemented into the pipeline
  + implement proper ylimits for parameter estimation plots; make sure to save the podid into the pod tables
  + write the two functions to run the 6 parameter model for A. thaliana
  + for module 02 change script names to include module number

@@ -366,7 +366,7 @@ def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng
             file=logfile,
         )
 
-    ts = simulate_transition_to_selfing(param_dict_list, rng)
+    ts = simulate_transition_to_selfing_and_independent_change_of_pop_size(param_dict_list, rng)
 
     # log
     with open(log, "a", encoding="utf-8") as logfile:
@@ -1311,7 +1311,7 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
                 )
 
     # log
-    if log and (not (sample_id % 50) or sample_id == len(sample_set_list)):
+    if log:
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print("finished treesequence subsampling", file=logfile)
