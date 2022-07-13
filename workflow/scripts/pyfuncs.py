@@ -1159,10 +1159,13 @@ def random_subsets_from_iterable(
     Returns:
         2d-np.arryay, sample sets
     """
-    max_combinations = math.comb(len(iterable), min(size, len(iterable)))
+    size = min(size, len(iterable))  # restrict size by length of iterable
+    
 
     # limit sample size to max possible combinations
+    max_combinations = math.comb(len(iterable), size)
     nsam = min(nsam, max_combinations)
+
 
     # create sample subsets
     sampled_combinations = []
@@ -1207,6 +1210,7 @@ def random_subsets_from_iterable(
                     "created index-based random (unique) subsamples",
                     file=logfile,
                 )
+
 
     return np.array(sampled_combinations)
 
@@ -1281,6 +1285,7 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
     tsl = tsl_haploid
     del tsl_haploid
 
+
     # log
     if log:
         with open(log, "a", encoding="utf-8") as logfile:
@@ -1294,6 +1299,7 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
     sample_set_list = random_subsets_from_iterable(
         tsl[0].samples(), specs["nsam"], specs["num_observations"], rng, log=log
     )
+
 
     # subset trees and provide multi-dim np.array of trees
     treeseq_list = [[] for _ in range(len(tsl))]
@@ -1315,6 +1321,7 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print("finished treesequence subsampling", file=logfile)
+
 
     return np.array(treeseq_list).T
 
