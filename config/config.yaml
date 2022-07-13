@@ -50,7 +50,7 @@ ABC:
       polarised: False
     LD:
       # number of random SNPs to take into account for the LD calculation
-      npos: 1e2
+      npos: 1e3
       breaks:  # which breakpoints to use for discretization
         - 1
         - 6105.472
@@ -95,9 +95,9 @@ ABC:
     # (uniform, loguniform)
     priors:
       - [1e4, 2e5, int, loguniform]  # param 1: pop size
-      - [0.8, 1, float, uniform]  # param 2: present selfing rate
+      - [0.5, 1, float, uniform]  # param 2: present selfing rate
       - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
-      - [0.8e3, 5e5, int, loguniform]  # param 4: time of transition
+      - [0.9e3, 5e5, int, loguniform]  # param 4: time of transition
 
   alternative_model:
     # wether to as for the the alternative model to be simulated
@@ -134,13 +134,13 @@ ABC:
       - [0.1,   0.1,   0.1,   0.1,  0.1,  0.1,  0.1,  0.1]  # param 3 for each pods, respectively
       - [2e4,   1e4,   4e4,   1e5,  5e5,  1e3,  2e3,  5e3]  # param 4 for each pods, respectively
     pls: [20]
-    pls_max: 55  # maximal pls to be calculated for transformer
+    pls_max: 33  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
     regression: ["loclinear"]
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: True
+    do_thaliana: False
     # whehter to visualize the parameter estimation of Arabidopsis thaliana
     do_visualisation: True
     # initial seed to generate the random seed numbers for the simulations
