@@ -66,7 +66,7 @@ rule confirm_athal_params_for_loci_being_same_and_save_params:
     log:
         log1="logs/module04/confirm_athal_params_for_loci_being_same_and_save_params/sim_{simid}.checked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     script:
         "../scripts/01.confirm_params_for_loci_being_same_and_save_params.py"
@@ -82,7 +82,7 @@ rule calculate_athal_sumstats:
     log:
         log1="logs/module04/calculate_athal_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_simulation"
     threads: 1
@@ -105,7 +105,7 @@ rule calculate_athal_masked_sumstats:
     log:
         log1="logs/module04/calculate_athal_masked_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_simulation"
     threads: 1
@@ -138,7 +138,7 @@ rule aggregate_athal_sumstats:
     log:
         log1="logs/module04/aggregate_athal_sumstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -169,7 +169,7 @@ rule aggregate_athal_sumstats_masked:
     log:
         log1="logs/module04/aggregate_athal_sumstats_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     # params:
@@ -190,7 +190,7 @@ rule calculate_athal_observations:
     log:
         log1="logs/module04/calculate_athal_observations/population_{popid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     params:
         masked=False,
@@ -214,7 +214,7 @@ rule calculate_athal_observations_masked:
     log:
         log1="logs/module04/calculate_athal_observations_masked/population_{popid}.log"
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     params:
         masked=True,
@@ -239,7 +239,7 @@ rule calculate_athal_all_region_observations:
     log:
         log1="logs/module04/calculate_athal_all_region_observations/population_{popid}.log"
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     params:
         masked=False,
@@ -264,7 +264,7 @@ rule calculate_athal_all_region_observations_masked:
     log:
         log1="logs/module04/calculate_athal_all_region_observations_masked/population_{popid}.log"
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     params:
         masked=True,
@@ -288,7 +288,7 @@ rule aggregate_athal_observations:
     log:
         log1="logs/module04/aggregate_athal_observations.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -309,7 +309,7 @@ rule aggregate_athal_observations_masked:
     log:
         log1="logs/module04/aggregate_athal_observations_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -330,7 +330,7 @@ rule aggregate_athal_all_regions_observations:
     log:
         log1="logs/module04/aggregate_athal_all_regions_observations.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -351,7 +351,7 @@ rule aggregate_athal_all_regions_observations_masked:
     log:
         log1="logs/module04/aggregate_athal_all_regions_observations_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_observation"
     threads: 1
@@ -368,7 +368,7 @@ rule athal_parameter_estimation:
     log:
         log1="logs/module04/athal_parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -386,7 +386,7 @@ rule athal_parameter_estimation_masked:
     log:
         log1="logs/module04/athal_parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -408,7 +408,7 @@ rule aggregate_athal_parameter_estimation:
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation.log",
     # conda:
-    #    "config/env.yaml"
+    #    "../../config/env.yaml"
     # params:
     run:
         sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation\n" + "")
@@ -428,7 +428,7 @@ rule aggregate_athal_parameter_estimation_masked:
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation_masked.log",
     # conda:
-    #    "config/env.yaml"
+    #    "../../config/env.yaml"
     # params:
     run:
         sys.exit(
@@ -445,7 +445,7 @@ rule summarize_athal_param_estims:
     log:
         log1="logs/module04/summarize_athal_param_estims.log",
     # conda:
-    #    "config/env.yaml"
+    #    "../../config/env.yaml"
     # params:
     run:
         sys.exit(
@@ -462,7 +462,7 @@ rule summarize_athal_param_estims_masked:
     log:
         log1="logs/module04/summarize_athal_param_estims_masked.log",
     # conda:
-    #    "config/env.yaml"
+    #    "../../config/env.yaml"
     # params:
     run:
         sys.exit(
@@ -481,7 +481,7 @@ rule transform_athal_sumstats:
     log:
         log1="logs/module04/transform_athal_sumstats/transformation_{statcomposition}.{simorpod}.{dataset}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     group:
@@ -529,7 +529,7 @@ rule find_athal_pls:
     log:
         log1="logs/module04/find_athal_pls/transformed_{statcomposition}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     threads: 1
@@ -566,7 +566,7 @@ rule find_athal_pls_masked:
     log:
         log1="logs/module04/find_athal_pls_masked/transformed_{statcomposition}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     threads: 1

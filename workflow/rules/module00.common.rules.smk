@@ -19,7 +19,7 @@ rule calculate_theta_watterson:
     log:
         log1="logs/module00/calculate_two_N_zero.{mode}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         seed=int(
             float(

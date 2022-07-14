@@ -16,7 +16,7 @@ rule find_pls:
     log:
         log1="logs/module02/find_pls/transformed_{statcomposition}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     threads: 1
@@ -53,7 +53,7 @@ rule find_pls_masked:
     log:
         log1="logs/module02/find_pls/transformed_{statcomposition}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     threads: 1
@@ -91,7 +91,7 @@ rule transform_sumstats:
     log:
         log1="logs/module02/transform_sumstats/transformation_{statcomposition}.{simorpod}.{dataset}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     shadow:
         "shallow"
     group:
@@ -141,7 +141,7 @@ rule model_choice:
     log:
         log1="logs/module02/model_choice/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -161,7 +161,7 @@ rule model_choice_masked:
     log:
         log1="logs/module02/model_choice_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -182,7 +182,7 @@ rule aggregate_model_choice:
     log:
         log1="logs/module02/aggregate_model_choice/model_choice.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/02.aggregate_model_choice.R"
 
@@ -200,6 +200,6 @@ rule aggregate_model_choice_masked:
     log:
         log1="logs/module02/aggregate_model_choice_masked/model_choice.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/02.aggregate_model_choice.R"

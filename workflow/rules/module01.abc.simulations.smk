@@ -19,7 +19,7 @@ rule create_abc_simulation_randints:
     log:
         log1="logs/module01/create_abc_simulation_randints.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         seed=int(float(config["ABC"]["seed"])),
         nseed=(
@@ -36,7 +36,7 @@ rule create_abc_pod_randints:
     log:
         log1="logs/module01/create_abc_pod_randints.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         seed=int(float(config["ABC"]["performance"]["pods_seed"])),
         nseed=(
@@ -59,7 +59,7 @@ rule simulate_treeseqs:
     log:
         log1="logs/module01/simulate_treeseqs/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "abc_simulation"
     threads: 1
@@ -87,7 +87,7 @@ rule confirm_params_for_loci_being_same_and_save_params:
     log:
         log1="logs/module01/confirm_params_for_loci_being_same_and_save_params/sim_{simid}.checked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     script:
         "../scripts/01.confirm_params_for_loci_being_same_and_save_params.py"
@@ -101,7 +101,7 @@ rule simulate_treeseq_pods:
     log:
         log1="logs/module01/simulate_treeseq_pods/pod_{podid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -145,7 +145,7 @@ rule generate_discretizing_breakpoints_for_sumstats:
     log:
         log1="logs/module01/generate_discretizing_breakpoints_for_sumstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -166,7 +166,7 @@ rule calculate_sumstats:
     log:
         log1="logs/module01/calculate_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "abc_simulation"
     threads: 1
@@ -189,7 +189,7 @@ rule calculate_masked_sumstats:
     log:
         log1="logs/module01/calculate_masked_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "abc_simulation"
     threads: 1
@@ -222,7 +222,7 @@ rule aggregate_sumstats:
     log:
         log1="logs/module01/aggregate_sumstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -253,7 +253,7 @@ rule aggregate_sumstats_masked:
     log:
         log1="logs/module01/aggregate_sumstats_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -269,7 +269,7 @@ rule alternative_model_create_simulation_randints:
     log:
         log1="logs/module01/alternative_model_create_simulation_randints.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         seed=int(float(config["ABC"]["alternative_model"]["seed"])),
         nseed=(
@@ -289,7 +289,7 @@ rule alternative_model_simulate_treeseqs:
     log:
         log1="logs/module01/alternative_model_simulate_treeseqs/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "alternative_simulation"
     threads: 1
@@ -315,7 +315,7 @@ rule alternative_model_calculate_sumstats:
     log:
         log1="logs/module01/alternative_model_calculate_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "alternative_simulation"
     threads: 1
@@ -338,7 +338,7 @@ rule alternative_model_calculate_masked_sumstats:
     log:
         log1="logs/module01/alternative_model_calculate_masked_sumstats/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "alternative_simulation"
     threads: 1
@@ -362,7 +362,7 @@ rule confirm_alternative_params_for_loci_being_same_and_save_params:
     log:
         log1="logs/module01/confirm_alternative_params_for_loci_being_same_and_save_params/sim_{simid}.checked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     script:
         "../scripts/01.confirm_params_for_loci_being_same_and_save_params.py"
@@ -389,7 +389,7 @@ rule alternative_model_aggregate_sumstats:
     log:
         log1="logs/module01/alternative_model_aggregate_sumstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -420,7 +420,7 @@ rule alternative_model_aggregate_sumstats_masked:
     log:
         log1="logs/module01/alternative_model_aggregate_sumstats_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -440,7 +440,7 @@ rule calculate_podstats:
     log:
         log1="logs/module01/calculate_podstats/podid_{podid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "abc_simulation"
     threads: 1
@@ -465,7 +465,7 @@ rule aggregate_podstats:
     log:
         log1="logs/module01/aggregate_podstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:
@@ -486,7 +486,7 @@ rule calculate_podstats_masked:
     log:
         log1="logs/module01/calculate_podstats_masked/podid_{podid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "abc_simulation"
     threads: 1
@@ -511,7 +511,7 @@ rule aggregate_podstats_masked:
     log:
         log1="logs/module01/aggregate_podstats_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     threads: 1
     # resources:
     params:

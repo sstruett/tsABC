@@ -16,7 +16,7 @@ rule parameter_estimation:
     log:
         log1="logs/module03/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -40,7 +40,7 @@ rule parameter_estimation_masked:
     log:
         log1="logs/module03/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
@@ -64,7 +64,7 @@ rule aggregate_parameter_estimation:
     log:
         log1="logs/module03/aggregate_parameter_estimation/parameter_estimation.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/03.aggregate_parameter_estimation.R"
 
@@ -82,6 +82,6 @@ rule aggregate_parameter_estimation_masked:
     log:
         log1="logs/module03/aggregate_parameter_estimation_masked/parameter_estimation_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/03.aggregate_parameter_estimation.R"
