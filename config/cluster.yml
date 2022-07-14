@@ -1,0 +1,7 @@
+__default__ :
+    queue     : "normal"
+    memory    : "3000"
+    resources : "\"rusage[mem=1000]\""
+
+# possible cluster exec
+# $ snakemake -j 200 --latency-wait 300 --use-conda results/athal/simulations/sumstats.feather results/athal/simulations/sumstats.masked.feather --cluster-config config/cluster.yml --cluster "bsub -n {threads} -q {cluster.queue} -M {cluster.memory} -R {cluster.resources} " -nq
