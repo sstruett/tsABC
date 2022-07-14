@@ -45,7 +45,7 @@ rule create_abc_pod_randints:
             int(float(config["ABC"]["locdim"])),  # number of loci
             # max number of different pod sets
             int(float(config["ABC"]["performance"]["poddim"]))
-        )
+        ),
     script:
         "../scripts/01.create_abc_pod_randints.py"
 

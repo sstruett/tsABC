@@ -50,12 +50,6 @@ def main(simid):
     )
 
 
-    print(ts)
-    sys.exit("#" * 600 + " inside 04.simulate_sixpar_treeseqs.py: Did the tree sequence got simulated?")
-
-
-
-
     return ts, params
 
 
@@ -89,7 +83,3 @@ with open(snakemake.output.tsl, "wb") as tsl_file:
 
 # save parameters list
 np.save(snakemake.output.params, np.array(parameters_list))
-
-
-# debug
-sys.exit("#" * 600 + " inside 04.simulate_sixpar_treeseqs.py: what is happening here? simulate six par model")

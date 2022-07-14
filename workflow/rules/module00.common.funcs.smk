@@ -89,17 +89,20 @@ def target_files(wildcards, verbose=True):
     # simulations and observations for athal
     if config["ABC"]["athaliana"]["do_thaliana"]:
         # observations
-        target_file_list.extend([
-            "results/athal/observed/sumstats.feather",
-            "results/athal/observed/sumstats.masked.feather"
-            ])
-        
-        # simulations
-        target_file_list.extend([
-            "results/athal/simulations/sumstats.feather",
-            "results/athal/simulations/sumstats.masked.feather"
-            ])
+        target_file_list.extend(
+            [
+                "results/athal/observed/sumstats.feather",
+                "results/athal/observed/sumstats.masked.feather",
+            ]
+        )
 
+        # simulations
+        target_file_list.extend(
+            [
+                "results/athal/simulations/sumstats.feather",
+                "results/athal/simulations/sumstats.masked.feather",
+            ]
+        )
 
     # print the requested files to the standard error stream
     if verbose:
