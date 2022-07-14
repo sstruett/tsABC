@@ -19,8 +19,8 @@ onstart:
 
 
 onsuccess:
-    shutil.rmtree(".snakemake", ignore_errors=True)
-    print("removed .snakemake/")
+    # shutil.rmtree(".snakemake", ignore_errors=True)
+    print("did not remove .snakemake/")
 
 
 include: "rules/module00.common.rules.smk"

@@ -19,7 +19,7 @@ rule visualize_podstats:
     log:
         log1="logs/module05/visualize_podstats.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/05.visualize_podstats.R"
 
@@ -35,7 +35,7 @@ rule visualize_podstats_masked:
     log:
         log1="logs/module05/visualize_podstats_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     script:
         "../scripts/05.visualize_podstats.R"
 
@@ -48,7 +48,7 @@ rule visualize_model_choice:
     log:
         log1="logs/module05/visualize_model_choice.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         # param no 4 (zero-based) must be t_sigma
         tsigma_per_podid=config["ABC"]["performance"]["pods"][3],
@@ -64,7 +64,7 @@ rule visualize_model_choice_masked:
     log:
         log1="logs/module05/visualize_model_choice_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         # param no 4 (zero-based) must be t_sigma
         tsigma_per_podid=config["ABC"]["performance"]["pods"][3],
@@ -80,7 +80,7 @@ rule visualize_parameter_estimation:
     log:
         log1="logs/module05/visualize_paremter_estimation.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         # param no 4 (zero-based) must be t_sigma
         tsigma_per_podid=config["ABC"]["performance"]["pods"][3],
@@ -98,7 +98,7 @@ rule visualize_parameter_estimation_masked:
     log:
         log1="logs/module05/visualize_parameter_estimation_masked.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     params:
         # param no 4 (zero-based) must be t_sigma
         tsigma_per_podid=config["ABC"]["performance"]["pods"][3],
