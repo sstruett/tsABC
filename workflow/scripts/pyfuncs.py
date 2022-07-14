@@ -253,12 +253,7 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
     return ts_mutated
 
 
-def simulate_treesequence_under_six_parameter_model(
-    params, 
-    rule_parameters,
-    rng,
-    log
-    ):
+def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
     """Simulates a tree sequence
 
     The simulation model is defined in this function. The simulation takes place
@@ -279,12 +274,7 @@ def simulate_treesequence_under_six_parameter_model(
     # rates will be implemented as 'demogrpaphy' without making a new phase out
     # of it
 
-
     # create demography for phase zero
-    print(params)
-
-
-
     demography_phase_zero = msprime.Demography()
     demography_phase_zero.add_population(
         initial_size=rescale_population_size_by_selfing(
@@ -292,12 +282,21 @@ def simulate_treesequence_under_six_parameter_model(
         ),
         description="Single population",
     )
-    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
 
-    # create simulation model for phase zero
+    # add change of pop size if it occured before the transition to selfing
+    # (bwd-in-time)
+    if params[2] < params[5]:
+        demography_phase_zero.add_population_parameters_change(
+            time=params[2],
+            initial_size=rescale_population_size_by_selfing(
+                population_size=params[1], selfing_rate=params[3], make_int=True
+            ),
+        )
+
+    # create simulation model for phase zero (selfing)
     model_phase_zero = [
         msprime.DiscreteTimeWrightFisher(
-            duration=min(rule_parameters["dtwf"], params[3])
+            duration=min(rule_parameters["dtwf"], params[5])
         ),
         msprime.SmcPrimeApproxCoalescent(),
     ]
@@ -311,24 +310,41 @@ def simulate_treesequence_under_six_parameter_model(
     param_dict_list[0][
         "recombination_rate_effective"
     ] = rescale_recombination_rate_by_selfing(
-        recombination_rate=rule_parameters["recrate"], selfing_rate=params[1]
+        recombination_rate=rule_parameters["recrate"], selfing_rate=params[3]
     )
     param_dict_list[0]["msprime_model"] = model_phase_zero
-    param_dict_list[0]["end_time"] = params[3]
+    param_dict_list[0]["end_time"] = params[5]
 
     # create demography for phase one
     demography_phase_one = msprime.Demography()
-    demography_phase_one.add_population(
-        initial_size=rescale_population_size_by_selfing(
-            population_size=params[0], selfing_rate=params[2], make_int=True
-        ),
-        description="Single population",
-    )
 
-    # create simulation model for phase one
+    # use pop size anc if the pop size change occured before the transition to
+    # selfing (bwd-in-time)
+    if params[2] < params[5]:
+        demography_phase_one.add_population(
+            initial_size=rescale_population_size_by_selfing(
+                population_size=params[1], selfing_rate=params[4], make_int=True
+            ),
+            description="Single population",
+        )
+    else:
+        demography_phase_one.add_population(
+            initial_size=rescale_population_size_by_selfing(
+                population_size=params[0], selfing_rate=params[4], make_int=True
+            ),
+            description="Single population",
+        )
+        demography_phase_one.add_population_parameters_change(
+            time=params[5],
+            initial_size=rescale_population_size_by_selfing(
+                population_size=params[1], selfing_rate=params[4], make_int=True
+            ),
+        )
+
+    # create simulation model for phase one (outcrossing)
     model_phase_one = [
         msprime.DiscreteTimeWrightFisher(
-            duration=max(0, rule_parameters["dtwf"] - params[3])
+            duration=max(0, rule_parameters["dtwf"] - params[5])
         ),
         msprime.SmcPrimeApproxCoalescent(),
     ]
@@ -338,29 +354,15 @@ def simulate_treesequence_under_six_parameter_model(
     param_dict_list[1][
         "recombination_rate_effective"
     ] = rescale_recombination_rate_by_selfing(
-        recombination_rate=rule_parameters["recrate"], selfing_rate=params[2]
+        recombination_rate=rule_parameters["recrate"], selfing_rate=params[4]
     )
     param_dict_list[1]["msprime_model"] = model_phase_one
-    param_dict_list[1]["start_time"] = params[3]
+    param_dict_list[1]["start_time"] = params[5]
 
     # log
     with open(log, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("created model", file=logfile)
-
-    demography_total = msprime.Demography()
-    demography_total.add_population(
-        initial_size=rescale_population_size_by_selfing(
-            population_size=params[0], selfing_rate=params[1], make_int=True
-        ),
-        description="Single population",
-    )
-    demography_total.add_population(
-        initial_size=rescale_population_size_by_selfing(
-            population_size=params[0], selfing_rate=params[2], make_int=True
-        ),
-        description="Single population",
-    )
 
     # log
     with open(log, "a", encoding="utf-8") as logfile:
@@ -368,23 +370,21 @@ def simulate_treesequence_under_six_parameter_model(
         print(
             "".join(
                 [
+                    f"parameters for simulation: {params}",
                     "\n",
                     "_" * 80,
-                    "\nDemography for simulation\n\n",
-                    str(demography),
+                    "\nDemography for simulation\n",
+                    "This demography is copy pasted from the creation of the",
+                    "two phases, which we need to change the recombination rate",
+                    "through time.\n\n",
+                    str(demography_phase_zero),
+                    "\n" f"Model change time: {param_dict_list[0]['end_time']}\n",
+                    str(demography_phase_one),
                     "\n" + "=" * 80,
                 ]
             ),
             file=logfile,
         )
-
-
-    print("\n" + "_"*80)
-    print(param_dict_list)
-    print("="*80+"\n\n")
-    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
-
-
 
     ts = simulate_transition_to_selfing(param_dict_list, rng)
 
@@ -409,12 +409,6 @@ def simulate_treesequence_under_six_parameter_model(
     with open(log, "a", encoding="utf-8") as logfile:
         print(datetime.datetime.now(), end="\t", file=logfile)
         print("simulated mutations", file=logfile)
-
-    sys.exit(
-        "#" * 600
-        + " inside simulate_treesequence_under_six_parameter_model\n"
-        + " did you implement the six parameter model already?"
-    )
 
     return ts_mutated
 
@@ -532,12 +526,6 @@ def simulate_popsize_change_with_constant_selfing(param_dict, rng):
     ts = ts_raw.simplify()
 
     return ts
-
-
-def simulate_transition_to_selfing_and_independent_change_of_pop_size(
-    param_dict_list, rng
-):
-    sys.exit("#" * 600 + " inside simulate_treesequence_under_six_parameter_model")
 
 
 def draw_parameter_from_prior(prior_definition, rng):
@@ -1180,12 +1168,10 @@ def random_subsets_from_iterable(
         2d-np.arryay, sample sets
     """
     size = min(size, len(iterable))  # restrict size by length of iterable
-    
 
     # limit sample size to max possible combinations
     max_combinations = math.comb(len(iterable), size)
     nsam = min(nsam, max_combinations)
-
 
     # create sample subsets
     sampled_combinations = []
@@ -1230,7 +1216,6 @@ def random_subsets_from_iterable(
                     "created index-based random (unique) subsamples",
                     file=logfile,
                 )
-
 
     return np.array(sampled_combinations)
 
@@ -1305,7 +1290,6 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
     tsl = tsl_haploid
     del tsl_haploid
 
-
     # log
     if log:
         with open(log, "a", encoding="utf-8") as logfile:
@@ -1319,7 +1303,6 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
     sample_set_list = random_subsets_from_iterable(
         tsl[0].samples(), specs["nsam"], specs["num_observations"], rng, log=log
     )
-
 
     # subset trees and provide multi-dim np.array of trees
     treeseq_list = [[] for _ in range(len(tsl))]
@@ -1341,7 +1324,6 @@ def create_subsets_from_treeseqlist(tsl, specs, rng, log=False):
         with open(log, "a", encoding="utf-8") as logfile:
             print(datetime.datetime.now(), end="\t", file=logfile)
             print("finished treesequence subsampling", file=logfile)
-
 
     return np.array(treeseq_list).T
 
