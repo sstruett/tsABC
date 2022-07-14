@@ -86,6 +86,21 @@ def target_files(wildcards, verbose=True):
     if config["ABC"]["athaliana"]["do_visualisation"]:
         target_file_list.extend([])
 
+    # simulations and observations for athal
+    if config["ABC"]["athaliana"]["do_thaliana"]:
+        # observations
+        target_file_list.extend([
+            "results/athal/observed/sumstats.feather",
+            "results/athal/observed/sumstats.masked.feather"
+            ])
+        
+        # simulations
+        target_file_list.extend([
+            "results/athal/simulations/sumstats.feather",
+            "results/athal/simulations/sumstats.masked.feather"
+            ])
+
+
     # print the requested files to the standard error stream
     if verbose:
         target_file_list.sort(key=str.lower)

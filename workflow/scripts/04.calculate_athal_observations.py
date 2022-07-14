@@ -277,6 +277,7 @@ if "SFS" in listed_sumstats:
         # reassign to the dataframe sumstat
         dataframe_sumstats_sfs = np.array(new_sfs_dataframe)
 
+
     # get average of sfs over the different loci
     dataframe_sumstats_sfs = dataframe_sumstats_sfs.mean(axis=1)
 

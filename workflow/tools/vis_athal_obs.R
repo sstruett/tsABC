@@ -28,9 +28,9 @@ loglabel <- sapply(logbreak, function(x) {
     return("")
 })
 
-
+ 
 # setwd(
-#   "/Users/struett/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
+#   "/Volumes/netscratch/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
 # )
 
 
@@ -55,6 +55,7 @@ pattern_from_vector <- function(my.list, my.pattern, reverse = T) {
   }
   return (new.list)
 }
+
 
 my_path <- "results/athal/observed/"
 file.list <- list.files(path = my_path)

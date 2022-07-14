@@ -253,7 +253,12 @@ def simulate_treesequence_under_alternative_model(params, rule_parameters, rng, 
     return ts_mutated
 
 
-def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng, log):
+def simulate_treesequence_under_six_parameter_model(
+    params, 
+    rule_parameters,
+    rng,
+    log
+    ):
     """Simulates a tree sequence
 
     The simulation model is defined in this function. The simulation takes place
@@ -270,14 +275,24 @@ def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng
     Returns:
         A single tree sequnce, with mutations
     """
+    # phase zero is selfing, phase one is outcrossing. The change of selfing
+    # rates will be implemented as 'demogrpaphy' without making a new phase out
+    # of it
+
+
     # create demography for phase zero
+    print(params)
+
+
+
     demography_phase_zero = msprime.Demography()
     demography_phase_zero.add_population(
         initial_size=rescale_population_size_by_selfing(
-            population_size=params[0], selfing_rate=params[1], make_int=True
+            population_size=params[0], selfing_rate=params[3], make_int=True
         ),
         description="Single population",
     )
+    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
 
     # create simulation model for phase zero
     model_phase_zero = [
@@ -355,18 +370,23 @@ def simulate_treesequence_under_six_parameter_model(params, rule_parameters, rng
                 [
                     "\n",
                     "_" * 80,
-                    "\nDemography for simulation\n",
-                    "This demography is copy pasted from the creation of the",
-                    "two phases, which we need to change the recombination rate",
-                    "through time.\n\n",
-                    str(demography_total),
+                    "\nDemography for simulation\n\n",
+                    str(demography),
                     "\n" + "=" * 80,
                 ]
             ),
             file=logfile,
         )
 
-    ts = simulate_transition_to_selfing_and_independent_change_of_pop_size(param_dict_list, rng)
+
+    print("\n" + "_"*80)
+    print(param_dict_list)
+    print("="*80+"\n\n")
+    sys.exit("#"*600 + " inside simulate_treesequence_under_six_parameter_model")
+
+
+
+    ts = simulate_transition_to_selfing(param_dict_list, rng)
 
     # log
     with open(log, "a", encoding="utf-8") as logfile:

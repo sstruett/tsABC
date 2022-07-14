@@ -140,7 +140,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: False
+    do_thaliana: True
     # whehter to visualize the parameter estimation of Arabidopsis thaliana
     do_visualisation: True
     # initial seed to generate the random seed numbers for the simulations
@@ -160,7 +160,7 @@ ABC:
       - [1e3, 1e5, int, loguniform]  # param 1: present pop size
       - [1e3, 1e5, int, loguniform]  # param 2: ancestral pop size
       - [1e2, 5e5, int, uniform]  # param 4: time of pop size change
-      - [0.8, 1, float, uniform]  # param 3: present selfing rate
+      - [0.5, 1, float, uniform]  # param 3: present selfing rate
       - [0, 0.2, float, uniform]  # param 4: ancestral selfing rate
       - [1e2, 5e5, int, uniform]  # param 5: time of transition
 

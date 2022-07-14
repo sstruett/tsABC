@@ -43,10 +43,18 @@ def main(simid):
         rng_params,
     )  # only the parameter drawing relies on the same seed, the simulations must be independent
 
+
     # simulate
     ts = pyfuncs.simulate_treesequence_under_six_parameter_model(
         params, snakemake.params, rng, snakemake.log.log1
     )
+
+
+    print(ts)
+    sys.exit("#" * 600 + " inside 04.simulate_sixpar_treeseqs.py: Did the tree sequence got simulated?")
+
+
+
 
     return ts, params
 
@@ -84,4 +92,4 @@ np.save(snakemake.output.params, np.array(parameters_list))
 
 
 # debug
-sys.exit("#" * 600 + " what is happening here? simulate six par model")
+sys.exit("#" * 600 + " inside 04.simulate_sixpar_treeseqs.py: what is happening here? simulate six par model")

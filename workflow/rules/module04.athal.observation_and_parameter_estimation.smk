@@ -18,7 +18,7 @@ rule create_athal_simulation_randints:
     log:
         log1="logs/module04/create_athal_simulation_randints.log",
     conda:
-        "config/env.yaml"
+        "../config/env.yaml"
     params:
         seed=int(float(config["ABC"]["athaliana"]["seed"])),
         nseed=(
@@ -38,7 +38,7 @@ rule simulate_athal_treeseqs:
     log:
         log1="logs/module04/simulate_athal_treeseqs/sim_{simid}.locus_{locid}.log",
     conda:
-        "config/env.yaml"
+        "../../config/env.yaml"
     group:
         "athal_simulation"
     threads: 1
