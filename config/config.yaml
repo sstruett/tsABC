@@ -150,9 +150,6 @@ ABC:
     # loci; for Arabidopsis thaliana, the first five rows would mark the seeds for
     # the simulation of 5 independent loci mimicking 5 chromosomes.
     locdim: 20
-    # will consequentially execute this number of simulations. This helps to
-    # reduce computational load to create the dag
-    jobluster_simulations: 250
 
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)

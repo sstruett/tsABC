@@ -150,9 +150,9 @@ rule aggregate_athal_sumstats:
 
 rule aggregate_athal_sumstats_masked:
     output:
-        masked="results/athal/simulations/sumstats.masked.feather",
+        sumstats="results/athal/simulations/sumstats.masked.feather",
     input:
-        npys_masked=expand(
+        npys=expand(
             rules.calculate_athal_masked_sumstats.output.npy,
             simid=wildcards_simid(config),
             locid=wildcards_locid(config),
@@ -172,7 +172,9 @@ rule aggregate_athal_sumstats_masked:
         "../../config/env.yaml"
     threads: 1
     # resources:
-    # params:
+    params:
+        simid_wc = wildcards_simid(config),
+        locid_wc = wildcards_locid(config)
     script:
         "../scripts/01.aggregate_sumstats.py"
 
@@ -362,9 +364,13 @@ rule aggregate_athal_all_regions_observations_masked:
 rule athal_parameter_estimation:
     output:
         estims="results/athal/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}..RDS",
+        postplots=directory(
+            "results/athal/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}/"
+        ),
     input:
         sumstats="results/athal/transformation/statcomp_{statcomposition}..simulations_sumstats.txt",
         observed="results/athal/transformation/statcomp_{statcomposition}..observed_sumstats.txt",
+        identifier=rules.aggregate_athal_observations.output.identifier,
     log:
         log1="logs/module04/athal_parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.transformed.log",
     conda:
@@ -372,13 +378,17 @@ rule athal_parameter_estimation:
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
+        regression="loclinear",  # r-abc package
     script:
-        "../scripts/02.parameter_estimation.R"
+        "../scripts/04.parameter_estimation.R"
 
 
 rule athal_parameter_estimation_masked:
     output:
         estims="results/athal/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.RDS",
+        postplots=directory(
+            "results/athal/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}/"
+        ),
     input:
         sumstats="results/athal/transformation/statcomp_{statcomposition}..simulations_sumstats.masked.txt",
         observed="results/athal/transformation/statcomp_{statcomposition}..observed_sumstats.masked.txt",
@@ -390,8 +400,9 @@ rule athal_parameter_estimation_masked:
     params:
         ntol=lambda wildcards: int(float(wildcards.tolid)),
         pls=lambda wildcards: int(float(wildcards.plsid)),
+        regression="loclinear",  # r-abc package
     script:
-        "../scripts/02.parameter_estimation.R"
+        "../scripts/04.parameter_estimation.R"
 
 
 rule aggregate_athal_parameter_estimation:
@@ -561,7 +572,7 @@ rule find_athal_pls_masked:
         transformer="results/athal/transformation/masked_transformer_{statcomposition}/Routput_{statcomposition}",
         rmse_plot="results/athal/transformation/masked_transformer_{statcomposition}/RMSE_{statcomposition}.pdf",
     input:
-        sumstats=rules.aggregate_athal_sumstats_masked.output.masked,
+        sumstats=rules.aggregate_athal_sumstats_masked.output.sumstats,
         script="workflow/scripts/find_pls_by_wanted_sumstats.R",
     log:
         log1="logs/module04/find_athal_pls_masked/transformed_{statcomposition}.log",
