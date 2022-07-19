@@ -385,7 +385,7 @@ rule athal_parameter_estimation:
 
 rule athal_parameter_estimation_masked:
     output:
-        estims="results/athal/parameter_estimation/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}.masked.RDS",
+        estims="results/athal/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}...RDS",
         postplots=directory(
             "results/athal/parameter_estimation_masked/statcomp_{statcomposition}.pls_{plsid}.tolid_{tolid}/"
         ),
