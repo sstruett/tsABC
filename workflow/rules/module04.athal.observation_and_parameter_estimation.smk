@@ -421,8 +421,8 @@ rule aggregate_athal_parameter_estimation:
     # conda:
     #    "../../config/env.yaml"
     # params:
-    run:
-        sys.exit("#" * 600 + "inside aggregate_athal_parameter_estimation\n" + "")
+    script:
+        "../scripts/04.aggregate_athal_parameter_estimation.R"
 
 
 rule aggregate_athal_parameter_estimation_masked:

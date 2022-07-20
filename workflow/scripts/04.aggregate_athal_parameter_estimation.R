@@ -1,3 +1,16 @@
+# for development
+save.image("rdev.RData")
+stop(
+  "saved rdev.RData; ########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################"
+)
+# setwd(
+#   "/Volumes/netscratch/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
+# )
+# # setwd("/Users/abgushtdizi/Dropbox/professional/phd/git_wolbachia/wolbachia_abc/")
+# load(file = "rdev.RData")
+# snakemake@log$log1 = ""
+
+
 # Aggregate parameter estimation
 #
 # Here, we aggregate the estimated parameters; we will provide the final output
@@ -43,7 +56,7 @@ cat("read data\n",
 df_collector <- list()
 for (parestid in 1:length(parameter.estimations)) {
   parest <- parameter.estimations[[parestid]]
-
+  
   # get values that are not posteriors; afterwards we can loop through the
   # posteriors
   parest.filename <- parest$filename
@@ -61,11 +74,10 @@ for (parestid in 1:length(parameter.estimations)) {
   
   # extract true params
   for (parest.id in 1:length(parest)) {
-    true_params <- parest[[parest.id]]$true_params
-    podid <- parest[[parest.id]]$podid
+    podid <- parest[[parest.id]]$obsid
     
     # loop through parameters and extract the posterior for each parameter
-    for (param.name in colnames(true_params)) {
+    for (param.name in colnames(parest[[parest.id]]$rej)) {
       post.rej <- parest[[parest.id]]$rej[, param.name]
       post.adj <- parest[[parest.id]]$adj[, param.name]
       
@@ -82,7 +94,6 @@ for (parestid in 1:length(parameter.estimations)) {
       
       df_0 <- data.frame(
         param = param.name,
-        true_value = true_params[[param.name]],
         statcomposition = parest.statcomposition,
         pls = parest.plsid,
         tol = parest.tolid,
@@ -142,7 +153,10 @@ df$mean <- apply(posteriors, 1, function(x) {
   return(mean(as.numeric(x), na.rm = TRUE))
 })
 df$mode <- apply(posteriors, 1, function(x) {
-  return(mlv(x, method = "meanshift", na.rm = TRUE))
+  print(x)
+  
+  stop()
+  return(quantile(as.numeric(x), 0.5, na.rm = TRUE))
 })
 df$median <- apply(posteriors, 1, function(x) {
   return(median(as.numeric(x), na.rm = TRUE))
@@ -172,3 +186,5 @@ cat("saved RDS",
     "\n",
     file = LOG,
     append = T)
+
+
