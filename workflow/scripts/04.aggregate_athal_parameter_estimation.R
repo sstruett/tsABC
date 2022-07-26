@@ -3,12 +3,10 @@ save.image("rdev.RData")
 stop(
   "saved rdev.RData; ########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################"
 )
-# setwd(
-#   "/Volumes/netscratch/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/"
-# )
-# # setwd("/Users/abgushtdizi/Dropbox/professional/phd/git_wolbachia/wolbachia_abc/")
-# load(file = "rdev.RData")
-# snakemake@log$log1 = ""
+# # setwd("/Volumes/netscratch/dep_tsiantis/grp_laurent/struett/git_wolbachia/wolbachia_abc/")
+# # # setwd("/Users/abgushtdizi/Dropbox/professional/phd/git_wolbachia/wolbachia_abc/")
+# # load(file="rdev.RData")
+# # snakemake@log$log1=""
 
 
 # Aggregate parameter estimation
@@ -122,7 +120,7 @@ for (parestid in 1:length(parameter.estimations)) {
         ";",
         param.name,
         "of",
-        length(colnames(true_params)),
+        length(colnames(parest[[parest.id]]$rej)),
         ";",
         "\n",
         file = LOG,
@@ -133,7 +131,7 @@ for (parestid in 1:length(parameter.estimations)) {
     }
   }
 }
-rm(parest, parameter.estimations, true_params)
+rm(parest, parameter.estimations)
 
 
 # put into a single tibble
@@ -153,10 +151,7 @@ df$mean <- apply(posteriors, 1, function(x) {
   return(mean(as.numeric(x), na.rm = TRUE))
 })
 df$mode <- apply(posteriors, 1, function(x) {
-  print(x)
-  
-  stop()
-  return(quantile(as.numeric(x), 0.5, na.rm = TRUE))
+  return(mlv(x, method = "meanshift", na.rm = TRUE))
 })
 df$median <- apply(posteriors, 1, function(x) {
   return(median(as.numeric(x), na.rm = TRUE))
