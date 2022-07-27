@@ -482,6 +482,11 @@ rule aggregate_athal_parameter_estimation_masked:
             plsid=wildcards_plsid(config),
             tolid=wildcards_tolid(config),
             statcomposition=wildcards_statcomposition(config),
+        ) + expand(
+            rules.athal_parameter_estimation_masked_all_regions.output.estims,
+            plsid=wildcards_plsid(config),
+            tolid=wildcards_tolid(config),
+            statcomposition=wildcards_statcomposition(config),
         ),
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation_masked.log",
@@ -490,6 +495,7 @@ rule aggregate_athal_parameter_estimation_masked:
     # params:
     script:
         "../scripts/04.aggregate_athal_parameter_estimation.R"
+
 
 
 rule summarize_athal_param_estims:
@@ -536,6 +542,8 @@ rule transform_athal_sumstats:
         subsetter="workflow/scripts/subset_table_and_separate_params.py",
     log:
         log1="logs/module04/transform_athal_sumstats/transformation_{statcomposition}.{simorpod}.{dataset}.log",
+    wildcard_constraints:
+        simorpod="[A-Za-z0-9_]+"
     conda:
         "../../config/env.yaml"
     shadow:
@@ -550,28 +558,19 @@ rule transform_athal_sumstats:
         # use the tools from the ABCtoolbox to do so.
         # The data has to be provided as .txt file for the transformer; this is
         # a pre-step to the actual calculation.
-
-
         # step 1: subset the stats/podstats and provide them as .txt
         python {input.subsetter} {input.transformer} {input.sumstats} subset.sumstat.table
-
         # log
         date > {log.log1}
         echo "subsetted and wrote sumstats and podstats as .txt" >> {log.log1}
-
-
         # step 2: transform the stats/podstats
         ./{input.script} {input.transformer} subset.sumstat.table.sumstat {output.sumstats} boxcox
-
         # log
         date >> {log.log1}
         echo "transformed sumstats and podstats" >> {log.log1}
-
-
         # give head of both files
         echo "\n\nsumstats' head" >> {log.log1}
         head {output.sumstats} >> {log.log1}
-
         """
 
 
@@ -598,7 +597,6 @@ rule find_athal_pls:
         r"""
         # please leave threads 1, otherwise writing between cores seems to slow down the process
         #export OPENBLAS_NUM_THREADS={threads} OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}
-
         which Rscript
         which R
         Rscript --vanilla {input.script} \
@@ -608,7 +606,6 @@ rule find_athal_pls:
             {params.num_pls_max} \
             {wildcards.statcomposition} \
             "{params.sumstats_to_use}"
-
         """
 
 
@@ -635,7 +632,6 @@ rule find_athal_pls_masked:
         r"""
         # please leave threads 1, otherwise writing between cores seems to slow down the process
         #export OPENBLAS_NUM_THREADS={threads} OMP_NUM_THREADS={threads} MKL_NUM_THREADS={threads}
-
         which Rscript
         which R
         Rscript --vanilla {input.script} \
@@ -645,5 +641,4 @@ rule find_athal_pls_masked:
             {params.num_pls_max} \
             {wildcards.statcomposition} \
             "{params.sumstats_to_use}"
-
         """

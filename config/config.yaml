@@ -34,7 +34,7 @@ ABC:
 
   # combinations of summary statistics to be used for the model choice and
   # parameter estimate
-  sumstats:
+  sumstats:  # currently supports SFS, LD, TM_WIN; to combine use /, e.g. SFS/LD
     - SFS/LD
     - TM_WIN
     - SFS/LD/TM_WIN

@@ -1,9 +1,9 @@
-# for development
-save.image("rdev.RData")
-stop(
-  "saved rdev.RData; ########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################"
-)
-# # setwd("/Volumes/netscratch/dep_tsiantis/grp_laurent/struett/git_wolbachia/wolbachia_abc/")
+# # for development
+# save.image("rdev.RData")
+# stop(
+#   "saved rdev.RData; ########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################"
+# )
+# # setwd("/Users/struett/MPIPZ/netscratch-2/dep_tsiantis/grp_laurent/struett/git_tsABC/tsABC/")
 # # # setwd("/Users/abgushtdizi/Dropbox/professional/phd/git_wolbachia/wolbachia_abc/")
 # # load(file="rdev.RData")
 # # snakemake@log$log1=""
@@ -42,6 +42,7 @@ for (infileid in 1:length(snakemake@input$estims)) {
     max(c(max_tolid, as.numeric(split[which(split == "tolid") + 1])))
   parameter.estimations[[infileid]]$statcomposition <-
     as.numeric(split[which(split == "statcomp") + 1])
+  parameter.estimations[[infileid]]$allregions <- "allregions" %in% split
 }
 
 
@@ -61,12 +62,14 @@ for (parestid in 1:length(parameter.estimations)) {
   parest.plsid <- parest$plsid
   parest.tolid <- parest$tolid
   parest.statcomposition <- parest$statcomposition
+  parest.allregions <- parest$allregions
   
   # remove from list; afterwards we can loop through
   parest$filename <- NULL
   parest$plsid <- NULL
   parest$tolid <- NULL
   parest$statcomposition <- NULL
+  parest$allregions <- NULL
   parest$prior <- NULL
   
   
@@ -95,6 +98,7 @@ for (parestid in 1:length(parameter.estimations)) {
         statcomposition = parest.statcomposition,
         pls = parest.plsid,
         tol = parest.tolid,
+        allregions = parest.allregions,
         regression = c("rej", "adj"),
         podid = podid
       )
