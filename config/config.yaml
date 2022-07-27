@@ -151,6 +151,10 @@ ABC:
     # the simulation of 5 independent loci mimicking 5 chromosomes.
     locdim: 20
 
+    # number of simulations to do
+    nsim: 20000
+    first_simid: 0  # see above
+    jobluster_simulations: 100  # see above
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:

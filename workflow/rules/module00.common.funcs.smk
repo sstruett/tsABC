@@ -215,7 +215,7 @@ def check_configuration_file(config):
     return True
 
 
-def wildcards_simid(config, alternative_model=False):
+def wildcards_simid(config, alternative_model=False, is_athal=False):
     """
     provide a list/generator of all simulation ids. This a helper function for
     the aggregation rules; it solely relies on the configuration yaml. Here the
@@ -227,6 +227,8 @@ def wildcards_simid(config, alternative_model=False):
             reads in as yaml
         alternative_model: bool, whether to get the simids for the alternative
             model simulations or not; default False
+        is_athal: bool, whether to get the simids for the athal simulations. This
+            overwrites alternative_model
 
     Returns:
         list of simids (int)
@@ -252,6 +254,21 @@ def wildcards_simid(config, alternative_model=False):
 
         # set the simids named as the first for each clustered set
         simids = [low + clusid * jclus for clusid in range(math.ceil(nsim / jclus))]
+
+
+    # this overwrites the produced simids if is_athal == True
+    if is_athal:
+        # range of the actual simids
+        nsim = int(float(config["ABC"]["athaliana"]["nsim"]))
+        low = int(float(config["ABC"]["athaliana"]["first_simid"]))
+        high = low + nsim
+
+        # number of aggregated sims, i. e. the cluster size
+        jclus = int(float(config["ABC"]["athaliana"]["jobluster_simulations"]))
+
+        # set the simids named as the first for each clustered set
+        simids = [low + clusid * jclus for clusid in range(math.ceil(nsim / jclus))]
+
 
     return simids
 
