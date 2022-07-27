@@ -130,7 +130,7 @@ for sumstat in unique_sumstats:
             snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["breaks_mode"]
             == "expected"
         ):
-            discretized_times = discretized_times(
+            discretized_times = pyfuncs.discretized_times(
                 n=snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["classes"], M=2
             )
             mutrate = float(snakemake.config["ABC"]["simulations"]["mutrate"])
@@ -144,7 +144,7 @@ for sumstat in unique_sumstats:
             window_size = int(
                 float(snakemake.config["ABC"]["sumstats_specs"]["TM_WIN"]["winsize"])
             )
-            breaks = snp_freq_from_times(
+            breaks = pyfuncs.snp_freq_from_times(
                 discretized_times, two_N_zero, mutrate, window_size
             )
         else:
