@@ -123,17 +123,17 @@ rule aggregate_athal_sumstats:
     input:
         npys=expand(
             rules.calculate_athal_sumstats.output.npy,
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config, is_athal=True),
             locid=wildcards_locid(config),
         ),
         sumstat_names=expand(
             rules.calculate_athal_sumstats.output.sumstat_count,
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config, is_athal=True),
             locid=wildcards_locid(config),
         ),
         params=expand(
             "results/athal/simulations/params/sim_{simid}.params.npy",
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config, is_athal=True),
         ),
     log:
         log1="logs/module04/aggregate_athal_sumstats.log",
@@ -154,17 +154,17 @@ rule aggregate_athal_sumstats_masked:
     input:
         npys=expand(
             rules.calculate_athal_masked_sumstats.output.npy,
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config, is_athal=True),
             locid=wildcards_locid(config),
         ),
         sumstat_names=expand(
             rules.calculate_masked_sumstats.output.sumstat_count,
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config, is_athal=True),
             locid=wildcards_locid(config),
         ),
         params=expand(
             rules.confirm_athal_params_for_loci_being_same_and_save_params.output.params,
-            simid=wildcards_simid(config),
+            simid=wildcards_simid(config), is_athal=True,
         ),
     log:
         log1="logs/module04/aggregate_athal_sumstats_masked.log",
@@ -497,39 +497,34 @@ rule aggregate_athal_parameter_estimation_masked:
         "../scripts/04.aggregate_athal_parameter_estimation.R"
 
 
-
 rule summarize_athal_param_estims:
     output:
         table="results/athal/summarized_athal_parameter_estimations.csv",
-        plot="results/athal/summarized_athal_parameter_estimations.pdf",
+        plot="results/plots/athal/summarized_athal_parameter_estimations.pdf",
     input:
         estims=rules.aggregate_athal_parameter_estimation.output.estims,
     log:
         log1="logs/module04/summarize_athal_param_estims.log",
-    # conda:
-    #    "../../config/env.yaml"
+    conda:
+        "../../config/env.yaml"
     # params:
-    run:
-        sys.exit(
-            "#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + ""
-        )
+    script:
+        "../scripts/04.summarize_athal_param_estims.R"
 
 
 rule summarize_athal_param_estims_masked:
     output:
         table="results/athal/summarized_athal_parameter_estimations_masked.csv",
-        plot="results/athal/summarized_athal_parameter_estimations_masked.pdf",
+        plot="results/plots/athal/summarized_athal_parameter_estimations_masked.pdf",
     input:
         estims=rules.aggregate_athal_parameter_estimation_masked.output.estims,
     log:
         log1="logs/module04/summarize_athal_param_estims_masked.log",
-    # conda:
-    #    "../../config/env.yaml"
+    conda:
+        "../../config/env.yaml"
     # params:
-    run:
-        sys.exit(
-            "#" * 600 + "inside aggregate_athal_parameter_estimation_masked\n" + ""
-        )
+    script:
+        "../scripts/04.summarize_athal_param_estims.R"
 
 
 rule transform_athal_sumstats:
