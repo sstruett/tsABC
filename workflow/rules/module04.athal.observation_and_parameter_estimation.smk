@@ -466,8 +466,8 @@ rule aggregate_athal_parameter_estimation:
         ),
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation.log",
-    # conda:
-    #    "../../config/env.yaml"
+    conda:
+        "../../config/env.yaml"
     # params:
     script:
         "../scripts/04.aggregate_athal_parameter_estimation.R"
@@ -490,8 +490,8 @@ rule aggregate_athal_parameter_estimation_masked:
         ),
     log:
         log1="logs/module04/aggregate_athal_parameter_estimation_masked.log",
-    # conda:
-    #    "../../config/env.yaml"
+    conda:
+        "../../config/env.yaml"
     # params:
     script:
         "../scripts/04.aggregate_athal_parameter_estimation.R"
