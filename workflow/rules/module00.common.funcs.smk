@@ -107,9 +107,18 @@ def target_files(wildcards, verbose=True):
     # print the requested files to the standard error stream
     if verbose:
         target_file_list.sort(key=str.lower)
+
+
+        # get numbers for prettyprint
+        num_target_files = len(target_file_list)
+        num_digits_target_files = int(math.log10(num_target_files))+1
+        num_max_spaces = 4 + num_digits_target_files
+
+
         print("\n" + "_" * 80, file=sys.stderr)
+        print("Target file list:\n")
         for file_index, target_file in enumerate(target_file_list, start=1):
-            print(f"  {file_index}.) {target_file}", file=sys.stderr)
+            print(f"{' ' * (num_max_spaces - len(str(file_index)))}{file_index}.) {target_file}", file=sys.stderr)
         print("\n" + "=" * 80 + "\n" * 2, file=sys.stderr)
 
     return target_file_list
