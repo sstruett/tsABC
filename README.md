@@ -36,5 +36,3 @@ tsABC was first developed to run on A. thaliana, thus, the data application modu
 
 ## Suggested development improvement
  + consequential ABC with increasing complexity of models
-
-# Updating files
