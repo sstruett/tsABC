@@ -14,19 +14,19 @@ ABC:
   locdim: 20
   # will consequentially execute this number of simulations. This helps to
   # reduce computational load to create the dag
-  jobluster_simulations: 100
+  jobluster_simulations: 10
 
   # id of the first simulation for this workflow. this is the index that is used
   # to pick the random seed number 
   first_simid: 0
 
   simulations:
-    nsim: 20000  # number of simulations for the ABC
+    nsim: 1000  # number of simulations for the ABC
     # number of sample haplotypes to simulate (and to observe for athaliana)
     nsam: 20
     nloci: 5  # number of independent loci (mimicking chromosomes)
     locuslen: 1e6  # length of each locus
-    mutrate: 1e-8  # 6.95e-9  # mutation rate
+    mutrate: 1e-9  # 6.95e-9  # mutation rate
     recrate: 1e-8  # 3.6e-8  # recombination rate
     # duration of initial simulation model ("discrete time WF"); see msprime
     # documentation
@@ -94,17 +94,17 @@ ABC:
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e4, 2e5, int, loguniform]  # param 1: pop size
+      - [1e3, 1e4, int, loguniform]  # param 1: pop size
       - [0.5, 1, float, uniform]  # param 2: present selfing rate
       - [0, 0.2, float, uniform]  # param 3: ancestral selfing rate
-      - [0.9e3, 5e5, int, loguniform]  # param 4: time of transition
+      - [1e2, 1e4, int, loguniform]  # param 4: time of transition
 
   alternative_model:
     # wether to as for the the alternative model to be simulated
     do_model_choice: True
     # initial seed to generate the random seed numbers for the simulations
     seed: 85426  # Do not change this
-    nsim: 20000  # number of simulations for the alternative model in the ABC
+    nsim: 1000  # number of simulations for the alternative model in the ABC
     # id of the first simulation for this workflow. this is the index that is used
     # to pick the random seed number 
     first_simid: 0
@@ -115,10 +115,10 @@ ABC:
     # quatrupels: min, max, numeric type (float, int), distribution type
     # (uniform, loguniform)
     priors:
-      - [1e4, 2e5, int, loguniform]  # param 1: present pop size
-      - [0.8, 1, float, uniform]  # param 2: constant selfing rate
-      - [1e4, 2e5, int, loguniform]  # param 3: ancestral pop size
-      - [0.8e4, 5e5, int, loguniform]  # param 4: time of pop size change
+      - [1e3, 1e4, int, loguniform]  # param 1: present pop size
+      - [0.5, 1, float, uniform]  # param 2: constant selfing rate
+      - [1e3, 1e4, int, loguniform]  # param 3: ancestral pop size
+      - [1e2, 1e4, int, loguniform]  # param 4: time of pop size change
 
   # analysis of performance 
   performance:
@@ -129,10 +129,10 @@ ABC:
     pods_seed: 23456
     poddim: 500  # max number of pod sets; important for seed generation
     pods:
-      - [4e4,   4e4,   4e4,   4e4,  4e4,  4e4,  4e4,  4e4]  # param 1 for each pods, respectively
-      - [0.99,  0.99,  0.99,  0.99, 0.99, 0.99, 0.99, 0.99]  # param 2 for each pods, respectively
-      - [0.1,   0.1,   0.1,   0.1,  0.1,  0.1,  0.1,  0.1]  # param 3 for each pods, respectively
-      - [2e4,   1e4,   4e4,   1e5,  5e5,  1e3,  2e3,  5e3]  # param 4 for each pods, respectively
+      - [5e3,   5e3,   5e3,   5e3,  5e3,  5e3]  # param 1 for each pods, respectively
+      - [0.99,  0.99,  0.99,  0.99, 0.99, 0.99]  # param 2 for each pods, respectively
+      - [0.1,   0.1,   0.1,   0.1,  0.1,  0.1]  # param 3 for each pods, respectively
+      - [5e3,   1e3,   2e3,   3e3,  1e4,  2e4]  # param 4 for each pods, respectively
     pls: [20]
     pls_max: 33  # maximal pls to be calculated for transformer
     # regression used for parameter estimate as defined in the r-abc package
@@ -140,7 +140,7 @@ ABC:
 
   # parameter estimation on Arabidopsis thaliana using the six-parameter model
   athaliana:
-    do_thaliana: True
+    do_thaliana: False
     # whehter to visualize the parameter estimation of Arabidopsis thaliana
     do_visualisation: True
     # initial seed to generate the random seed numbers for the simulations
