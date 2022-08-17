@@ -33,4 +33,4 @@ tsABC was first developed to run on A. thaliana, thus, the data application modu
  + update R scripts in module 02; rfunctions R and the scripts that use them
 
 ## Suggested development improvement
- + consequential ABC with increasing complexity of models
+ + Sequential ABC with increasing complexity of models
