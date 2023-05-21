@@ -19,18 +19,3 @@ tsABC was first developed to run on A. thaliana, thus, the data application modu
  + The downsampling for model choice does NOT work correctly; there are two possible ways to handle it: First, one could simulate the same number of simulations for both proposed models. Second, the downsampling should be taken care manually in the according (or before) R script.
 
 
-## Usability improvement ideas
- + describe that `$ snakemake -j 1 theta_watterson_genome` will calculate theta watterson on the whole region while `$ snakemake -j 1 theta_watterson_region` does it only on the provided regions of athal, while `snakemake -j 1 theta_watterson_pod` will uses 1000 simulated loci for the values of the first pod
- + consistent y limits for posterior plotting
- + for module 02 change script names to include module number
- + add parameter check for the athaliana priors
- + add checking mask files for length of locus
- + configuration sanity; check that number of athal regions and loci are the same
- + make regression type being in the config file not only in the params
- + make all R scripts print to log file not stdout
- + provide different modes for LD breaks
- + provide random masking if no masking file is provided
- + update R scripts in module 02; rfunctions R and the scripts that use them
-
-## Suggested development improvement
- + Sequential ABC with increasing complexity of models
